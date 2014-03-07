@@ -45,7 +45,7 @@ Collection.prototype.updateLimit = function ()
 
         this.addButton.toggle(!this.limitMax);
     }
-}
+};
 
 /**
  * Get length of the collection
@@ -55,7 +55,7 @@ Collection.prototype.updateLimit = function ()
 Collection.prototype.count = function ()
 {
     return this.element.children().length;
-}
+};
 
 /**
  * Add a new item
