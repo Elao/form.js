@@ -1,12 +1,12 @@
 var files = {
-    jquery: [
-      'src/jquery.js'
-    ],
-    collection: [
-      'src/collection/Collection.js',
-      'src/collection/CollectionItem.js'
-    ]
-  };
+  jquery: [
+    'src/jquery.js'
+  ],
+  collection: [
+    'src/collection/Collection.js',
+    'src/collection/CollectionItem.js'
+  ]
+};
 
 module.exports = function(grunt) {
 
@@ -25,7 +25,7 @@ module.exports = function(grunt) {
     uglify: {
       options: {
         banner: '<%= banner %>',
-        enclose: { 'window.jQuery': '$' }
+        enclose: { 'jQuery': '$' }
       },
       build: {
         src: [].concat(files.collection, files.jquery),
