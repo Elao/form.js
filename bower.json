@@ -5,5 +5,21 @@
   "license": "MIT",
   "dependencies": {
     "jquery": ">=1.9"
-  }
+  },
+  "homepage": "https://github.com/Elao/form.js",
+  "authors": [
+    "ELAO <contact@elao.com>",
+    "Thomas JARRAND <thomas.jarrand@gmail.com>"
+  ],
+  "description": "Form JS utilities",
+  "keywords": [
+    "form"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
 }
