@@ -40,7 +40,7 @@ A Choice field can be 'multiple', allowing the user to pick several values in th
 __Initialise both choices:__
 
 ```javascript
-$("select").collection();
+$("select").choice();
 ```
 
 ### Expanded choice (radio or checkboxe input tags):
@@ -69,10 +69,10 @@ $("select").collection();
 __Initialise this specific choice:__
 
 ```javascript
-$("#expanded-single").collection();
+$("#expanded-single").choice();
 ```
 
-_Note:_ The collection should be initiated on a single container element (it doesn't have to be a `fieldset` tag).
+_Note:_ The choice should be initiated on a single container element (it doesn't have to be a `fieldset` tag).
 The container should have exactly a children for each choice: no more, no less (it doesn't have to be `label` tags).
 
 #### Multiple:
@@ -100,7 +100,7 @@ The container should have exactly a children for each choice: no more, no less (
 __Initialise this specific choice:__
 
 ```javascript
-$("#expanded-multiple").collection();
+$("#expanded-multiple").choice();
 ```
 
 ## Features
@@ -109,7 +109,7 @@ The Choice javascript object that hold all the logic and data of the choice, it'
 You can access it like that:
 
 ```javascript
-$("#my-choice-field").collection();
+$("#my-choice-field").choice();
 var choice = $("#my-choice-field").data('choice');
 ```
 
