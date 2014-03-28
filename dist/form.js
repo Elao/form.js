@@ -4,4 +4,499 @@
  * Copyright 2014 Elao and other contributors; Licensed MIT
  */
 
-!function(a){function b(b){this.element=a(b),this.replaceKey=new RegExp(this.element.data("collection"),"g"),this.currentKey=this.count(),this.allowAdd=!1,this.allowDelete=!1,this.min=!1,this.max=!1,this.limitMin=!1,this.limitMax=!1,this.htmlPrototype=null,this.addButton=null,this.items=null,this.parseItems(),this.parseAdd(),this.parseDelete(),this.parseMin(),this.parseMax(),this.element.removeAttr("data-collection")}function c(b,c){this.collection=b,this.element=c;var d=a('[data-delete="'+this.element[0].id+'"]',c);this.collection.allowDelete&&d&&(this.deleteButton=d,this.deleteButton.on("click",this.remove.bind(this)))}b.prototype.updateLimit=function(){if(this.min){this.limitMin=this.count()<=this.min;for(var a=this.items.length-1;a>=0;a--)this.items[a].toggleDelete(!this.limitMin)}this.max&&(this.limitMax=this.count()>=this.max,this.addButton.toggle(!this.limitMax))},b.prototype.count=function(){return this.element.children().length},b.prototype.add=function(){if(this.allowAdd&&!this.limitMax){var a=this.getPrototype();this.items.push(a),this.element.append(a.element),this.currentKey++,this.element.trigger("collection:added",[a])}},b.prototype.remove=function(a){var b=this.items.indexOf(a);this.allowDelete&&!this.limitMin&&b>=0&&(this.items=this.items.slice(0,b).concat(this.items.slice(b+1)),a.element.remove(),this.element.trigger("collection:deleted",[a]))},b.prototype.getPrototype=function(){return new c(this,a(this.htmlPrototype.replace(this.replaceKey,this.currentKey)))},b.prototype.parseAdd=function(){var b=this.element.data("add");this.htmlPrototype=this.element.data("prototype"),this.element.removeAttr("data-prototype"),b&&(this.allowAdd=!0,this.addButton=a("#"+b),this.addButton.on("click",this.add.bind(this)),this.element.removeAttr("data-add"))},b.prototype.parseDelete=function(){this.element.data("delete")&&(this.allowDelete=!0,this.element.removeAttr("data-delete"))},b.prototype.parseMin=function(){var a=this.element.data("collection-min");a&&(this.min=a,this.element.on("collection:deleted",this.updateLimit.bind(this)),this.element.removeAttr("data-collection-min"),this.updateLimit())},b.prototype.parseMax=function(){var a=this.element.data("collection-max");a&&(this.max=a,this.element.on("collection:added",this.updateLimit.bind(this)),this.element.removeAttr("data-collection-max"),this.updateLimit())},b.prototype.parseItems=function(){if(!this.items){this.items=[];for(var a=this.element.children(),b=a.length,d=0;b>d;d++)this.items.push(new c(this,a[d]))}},c.prototype.remove=function(){this.collection.remove(this)},c.prototype.toggleDelete=function(a){this.deleteButton&&this.deleteButton.toggle(a)},a.fn.collection=function(a){return this.each(function(){new b(this,"object"==typeof a?a:{})})}}(jQuery);
+(function($) {
+    /**
+ * Data Set
+ */
+    function DataSet(elements) {
+        this.type = $.isArray(elements) ? "array" : "object";
+        this.elements = this.type == "array" ? [] : {};
+        this.emitter = $(document.createElement("div"));
+        this.onElementChange = this.onElementChange.bind(this);
+        this.index(elements);
+    }
+    /**
+ * Index elements
+ *
+ * @param {Array|Object} elements
+ */
+    DataSet.prototype.index = function(elements) {
+        if (this.type == "array") {
+            var length = element.length;
+            for (var i = 0; i < length; i++) {
+                this.addElement(element[i], i);
+            }
+        } else {
+            for (var name in elements) {
+                this.addElement(element[element], name);
+            }
+        }
+    };
+    /**
+ * Add an element to the set
+ *
+ * @param {Element} element
+ * @param {String|Number} index
+ */
+    DataSet.prototype.addElement = function(element, index) {
+        if (typeof this.elements[index] == "undefined") {
+            this.elements[index] = $(element);
+            this.elements[index].on("change", this.onElementChange);
+        }
+    };
+    /**
+ * On element change
+ *
+ * @param {Event} e
+ */
+    DataSet.prototype.onElementChange = function(e) {
+        this.parseData();
+        this.emitter.trigger("change");
+    };
+    /**
+ * Get filters
+ *
+ * @return {Array}
+ */
+    DataSet.prototype.parseData = function() {
+        var data = this.type == "array" ? [] : {}, value;
+        if (this.type == "array") {
+            var length = this.elements.length;
+            for (var i = 0; i < length; i++) {
+                value = smartParse(this.elements[i].val());
+                if (value !== null && value !== "") {
+                    data[i] = value;
+                }
+            }
+        } else {
+            for (var name in this.elements) {
+                value = smartParse(this.elements[name].val());
+                if (value !== null && value !== "") {
+                    data[name] = value;
+                }
+            }
+        }
+        this.data = data;
+    };
+    /**
+ * Attach event
+ *
+ * @param {String} event
+ * @param {Function} callback
+ */
+    DataSet.prototype.on = function(event, callback) {
+        this.emitter.on(event, callback);
+    };
+    /**
+ * Detach event
+ *
+ * @param {String} event
+ * @param {Function} callback
+ */
+    DataSet.prototype.off = function(event, callback) {
+        this.emitter.off(event, callback);
+    };
+    /**
+ * Smart parse from jQuery
+ *
+ * @param {mixed} data
+ *
+ * @return {mixed}
+ */
+    function smartParse(data) {
+        var rbrace = /^(?:\{[\w\W]*\}|\[[\w\W]*\])$/;
+        if (typeof data === "string") {
+            try {
+                data = data === "true" ? true : data === "false" ? false : data === "null" ? null : +data + "" === data ? +data : rbrace.test(data) ? jQuery.parseJSON(data) : data;
+            } catch (e) {}
+        }
+        return data;
+    }
+    /**
+ * Collection
+ *
+ * @param {Element} element
+ * @param {Object} options
+ */
+    function Collection(element, options) {
+        this.element = $(element);
+        this.replaceKey = new RegExp(this.element.data("collection"), "g");
+        this.currentKey = this.count();
+        this.allowAdd = false;
+        this.allowDelete = false;
+        this.min = false;
+        this.max = false;
+        this.limitMin = false;
+        this.limitMax = false;
+        this.htmlPrototype = null;
+        this.addButton = null;
+        this.items = null;
+        this.parseItems();
+        this.parseAdd();
+        this.parseDelete();
+        this.parseMin();
+        this.parseMax();
+        this.element.removeAttr("data-collection");
+    }
+    /**
+ * Update limit
+ */
+    Collection.prototype.updateLimit = function() {
+        if (this.min) {
+            this.limitMin = this.count() <= this.min;
+            for (var i = this.items.length - 1; i >= 0; i--) {
+                this.items[i].toggleDelete(!this.limitMin);
+            }
+        }
+        if (this.max) {
+            this.limitMax = this.count() >= this.max;
+            this.addButton.toggle(!this.limitMax);
+        }
+    };
+    /**
+ * Get length of the collection
+ *
+ * @return {Number}
+ */
+    Collection.prototype.count = function() {
+        return this.element.children().length;
+    };
+    /**
+ * Add a new item
+ */
+    Collection.prototype.add = function() {
+        if (this.allowAdd && !this.limitMax) {
+            var item = this.getPrototype();
+            this.items.push(item);
+            this.element.append(item.element);
+            this.currentKey++;
+            this.element.trigger("collection:added", [ item ]);
+        }
+    };
+    /**
+ * Delete an existing item
+ *
+ * @param {CollectionItem} item
+ */
+    Collection.prototype.remove = function(item) {
+        var index = this.items.indexOf(item);
+        if (this.allowDelete && !this.limitMin && index >= 0) {
+            this.items = this.items.slice(0, index).concat(this.items.slice(index + 1));
+            item.element.remove();
+            this.element.trigger("collection:deleted", [ item ]);
+        }
+    };
+    /**
+ * Get a new item from the HTML prototype
+ *
+ * @return {Element}
+ */
+    Collection.prototype.getPrototype = function() {
+        return new CollectionItem(this, $(this.htmlPrototype.replace(this.replaceKey, this.currentKey)));
+    };
+    /**
+ * Parse add button
+ */
+    Collection.prototype.parseAdd = function() {
+        var addButtonId = this.element.data("add");
+        this.htmlPrototype = this.element.data("prototype");
+        this.element.removeAttr("data-prototype");
+        if (addButtonId) {
+            this.allowAdd = true;
+            this.addButton = $("#" + addButtonId);
+            this.addButton.on("click", this.add.bind(this));
+            this.element.removeAttr("data-add");
+        }
+    };
+    /**
+ * Parse add button
+ */
+    Collection.prototype.parseDelete = function() {
+        if (this.element.data("delete")) {
+            this.allowDelete = true;
+            this.element.removeAttr("data-delete");
+        }
+    };
+    /**
+ * Parse Mininum
+ */
+    Collection.prototype.parseMin = function() {
+        var min = this.element.data("collection-min");
+        if (min) {
+            this.min = min;
+            this.element.on("collection:deleted", this.updateLimit.bind(this));
+            this.element.removeAttr("data-collection-min");
+            this.updateLimit();
+        }
+    };
+    /**
+ * Parse Maximum
+ */
+    Collection.prototype.parseMax = function() {
+        var max = this.element.data("collection-max");
+        if (max) {
+            this.max = max;
+            this.element.on("collection:added", this.updateLimit.bind(this));
+            this.element.removeAttr("data-collection-max");
+            this.updateLimit();
+        }
+    };
+    /**
+ * Parse Items
+ *
+ * @return {Array}
+ */
+    Collection.prototype.parseItems = function() {
+        if (!this.items) {
+            this.items = [];
+            var items = this.element.children(), length = items.length;
+            for (var i = 0; i < length; i++) {
+                this.items.push(new CollectionItem(this, items[i]));
+            }
+        }
+    };
+    /**
+ * Collection Item
+ *
+ * @param {Collection} collection
+ * @param {Element} element
+ */
+    function CollectionItem(collection, element) {
+        this.collection = collection;
+        this.element = element;
+        var deleteButton = $('[data-delete="' + this.element[0].id + '"]', element);
+        if (this.collection.allowDelete && deleteButton) {
+            this.deleteButton = deleteButton;
+            this.deleteButton.on("click", this.remove.bind(this));
+        }
+    }
+    /**
+ * Remove item from collection
+ */
+    CollectionItem.prototype.remove = function() {
+        this.collection.remove(this);
+    };
+    /**
+ * Toggle delete
+ */
+    CollectionItem.prototype.toggleDelete = function(toggle) {
+        if (this.deleteButton) {
+            this.deleteButton.toggle(toggle);
+        }
+    };
+    /**
+ * Choice
+ *
+ * @param {Element} element
+ */
+    function Choice(element, options) {
+        this.element = $(element);
+        this.expanded = this.element.prop("tagName").toLowerCase() != "select";
+        this.multiple = (this.expanded ? $('input[type="checkbox"]', this.element).length : this.element.prop("multiple")) ? true : false;
+        this.matcher = this.parseMatcher(options);
+        this.choices = [];
+        this.value = null;
+        var children = /*this.expanded ? $('input[type="' + (this.multiple ? 'checkbox' : 'radio') + '"]') :*/ this.element.children(), length = children.length;
+        for (var i = 0; i < length; i++) {
+            var option = new Option(children[i], this, typeof options.data != "undefined" ? options.data : null);
+            if (option.value !== "" && option.value !== null) {
+                this.choices.push(option);
+            }
+        }
+        this.element.on("change", this.updateValue.bind(this));
+        this.updateValue();
+    }
+    Choice.prototype.matchers = {};
+    /**
+ * Update value
+ */
+    Choice.prototype.updateValue = function() {
+        var value = this.getValueFromSelection();
+        if (this.value != value) {
+            this.value = value;
+        }
+    };
+    /**
+ * Alias for jQuery compatibility
+ *
+ * @return {mixed}
+ */
+    Choice.prototype.val = function() {
+        return this.getValueFromSelection();
+    };
+    /**
+ * Get value from selection
+ *
+ * @return {String}
+ */
+    Choice.prototype.getValueFromSelection = function() {
+        if (this.expanded) {
+            var selection = this.getSelection();
+            if (this.multiple) {
+                var length = selection.length, values = [];
+                for (var i = 0; i < length; i++) {
+                    values.push(selection[i].value);
+                }
+                return values;
+            }
+            return selection.value;
+        }
+        var value = this.element.val();
+        if (this.multiple) {
+            return value ? $.map(value, function(item) {
+                return smartParse(item);
+            }) : [];
+        }
+        return smartParse(value);
+    };
+    /**
+ * Get selection
+ *
+ * @return {Option|Array}
+ */
+    Choice.prototype.getSelection = function() {
+        var length = this.choices.length, selection = [], option;
+        for (var i = 0; i < length; i++) {
+            option = this.choices[i];
+            if (option.isSelected()) {
+                if (this.multiple) {
+                    selection.push(option);
+                } else {
+                    return option;
+                }
+            }
+        }
+        return selection;
+    };
+    /**
+ * Update the choice from filters
+ */
+    Choice.prototype.filter = function(filters) {
+        var length = this.choices.length;
+        for (var i = 0; i < length; i++) {
+            this.choices[i].filter(filters);
+        }
+    };
+    /**
+ * Test if the value of the given options exists in the filters
+ *
+ * @param {Option} option
+ * @param {Array} filters
+ *
+ * @return {Boolean}
+ */
+    Choice.prototype.matchers.valueOptionMatcher = function(option, filters) {
+        return $.isArray(filters) ? filters.indexOf(option.value) >= 0 : filters === option.value;
+    };
+    /**
+ * Choose a matcher according to the given options
+ *
+ * @param {Object} options
+ *
+ * @return {Function}
+ */
+    Choice.prototype.parseMatcher = function(options) {
+        var type = typeof options.matcher;
+        if (type == "function") {
+            return options.matcher;
+        }
+        if (type == "string" && typeof this.matchers[options.matcher] != "undefined") {
+            return this.matchers[options.matcher];
+        }
+        return this.matchers.valueOptionMatcher;
+    };
+    /**
+ * Option
+ *
+ * @param {Element} element
+ * @param {Choice} parent
+ * @param {Function} data
+ */
+    function Option(element, parent, data) {
+        this.element = $(element);
+        this.parent = parent;
+        this.valueElement = this.parent.expanded ? this.element.find('input[type="' + (this.parent.multiple ? "checkbox" : "radio") + '"]:first') : this.element;
+        this.value = smartParse(this.valueElement.val());
+        this.data = typeof data == "function" ? data.call(this) : this.element.data();
+    }
+    /**
+ * Filter the option
+ *
+ * @param {Array} filters
+ */
+    Option.prototype.filter = function(filters) {
+        this.detach();
+        if (this.match(filters)) {
+            this.attach();
+        } else {
+            this.handleSelection();
+        }
+    };
+    /**
+ * Handle current selection
+ */
+    Option.prototype.handleSelection = function() {
+        if (this.isSelected()) {
+            this.valueElement.prop(this.getSelectionProperty(), false);
+            this.triggerChange();
+        }
+    };
+    /**
+ * Is the option selected
+ *
+ * @return {Boolean}
+ */
+    Option.prototype.isSelected = function() {
+        return this.valueElement.is(":" + this.getSelectionProperty());
+    };
+    /**
+ * Get selection property
+ *
+ * @return {String}
+ */
+    Option.prototype.getSelectionProperty = function() {
+        return this.parent.expanded ? "checked" : "selected";
+    };
+    /**
+ * Trigger change
+ */
+    Option.prototype.triggerChange = function() {
+        (this.parent.expanded ? this.valueElement : this.parent.element).trigger("change");
+    };
+    /**
+ * Filter
+ *
+ * @param {Array} filters
+ *
+ * @return {Boolean}
+ */
+    Option.prototype.match = function(filters) {
+        return this.parent.matcher(this, filters);
+    };
+    /**
+ * Attach to the DOM
+ */
+    Option.prototype.attach = function() {
+        if (!this.element.parent().length) {
+            this.parent.element.append(this.element);
+        }
+    };
+    /**
+ * Attach to the DOM
+ */
+    Option.prototype.detach = function() {
+        if (this.element.parent().length) {
+            this.element.remove();
+        }
+    };
+    $.fn.collection = function(options) {
+        return this.each(function() {
+            $(this).data("collection", new Collection(this, typeof options == "object" ? options : {}));
+        });
+    };
+    $.fn.choice = function(options) {
+        return this.each(function() {
+            $(this).data("choice", new Choice(this, typeof options == "object" ? options : {}));
+        });
+    };
+})(jQuery);

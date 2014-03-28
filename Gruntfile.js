@@ -3,8 +3,13 @@ var files = {
     'src/jquery.js'
   ],
   collection: [
-    'src/collection/Collection.js',
-    'src/collection/CollectionItem.js'
+    'src/collection/*.js',
+  ],
+  choice: [
+    'src/choice/*.js',
+  ],
+  helper: [
+    'src/helper/*.js',
   ]
 };
 
@@ -23,27 +28,52 @@ module.exports = function(grunt) {
     ].join('\n'),
 
     uglify: {
-      options: {
-        banner: '<%= banner %>',
-        enclose: { 'jQuery': '$' }
+      min: {
+        options: {
+          banner: '<%= banner %>',
+          enclose: { 'jQuery': '$' }
+        },
+        files: {
+          'dist/form.min.js': [].concat(files.helper, files.collection, files.choice, files.jquery),
+        }
       },
-      build: {
-        src: [].concat(files.collection, files.jquery),
-        dest: 'dist/form.js'
+      full: {
+        options: {
+          banner: '<%= banner %>',
+          enclose: { 'jQuery': '$' },
+          preserveComments: 'all',
+          beautify: true,
+          mangle: false,
+          compress: false
+        },
+        files: {
+          'dist/form.js': [].concat(files.helper, files.collection, files.choice, files.jquery),
+        }
       }
     },
     jshint: {
       src: 'src/**/*.js',
       gruntfile: ['Gruntfile.js']
-    }
+    },
+    watch: {
+      scripts: {
+        files: 'src/**/*.js',
+        tasks: ['build'],
+        options: {
+          interrupt: true,
+          atBegin: true
+        },
+      },
+    },
   });
 
   // Load the plugin that provides the "uglify" task.
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
 
   // Default task(s).
   grunt.registerTask('default', 'build');
-  grunt.registerTask('build', 'uglify');
+  grunt.registerTask('build', ['jshint', 'uglify']);
   grunt.registerTask('lint', 'jshint');
 };

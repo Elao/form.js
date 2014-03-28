@@ -2,8 +2,9 @@
  * Collection
  *
  * @param {Element} element
+ * @param {Object} options
  */
-function Collection (element)
+function Collection (element, options)
 {
     this.element       = $(element);
     this.replaceKey    = new RegExp(this.element.data('collection'), 'g');
