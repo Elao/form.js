@@ -8,11 +8,10 @@ function Choice(element, options)
     this.element  = $(element);
     this.expanded = this.element.prop('tagName').toLowerCase() != 'select';
     this.multiple = (this.expanded ? $('input[type="checkbox"]', this.element).length : this.element.prop('multiple') ) ? true : false;
-    this.matcher  = this.parseMatcher(options);
     this.choices  = [];
     this.value    = null;
 
-    var children = /*this.expanded ? $('input[type="' + (this.multiple ? 'checkbox' : 'radio') + '"]') :*/ this.element.children(),
+    var children = this.element.children(),
         length = children.length;
 
     for (var i = 0; i < length; i++) {
@@ -48,7 +47,7 @@ Choice.prototype.updateValue = function()
  */
 Choice.prototype.val = function()
 {
-    return this.getValueFromSelection();
+    return this.value;
 };
 
 /**
@@ -116,45 +115,46 @@ Choice.prototype.getSelection = function()
 /**
  * Update the choice from filters
  */
-Choice.prototype.filter = function(filters)
+Choice.prototype.filter = function(filter, matcher)
 {
     var length = this.choices.length;
+        matcher = this.parseMatcher(matcher);
 
     for (var i = 0; i < length; i++) {
-        this.choices[i].filter(filters);
+        this.choices[i].filter(filter, matcher);
     }
 };
 
 /**
- * Test if the value of the given options exists in the filters
+ * Test if the value of the given options exists in the filter
  *
  * @param {Option} option
- * @param {Array} filters
+ * @param {Array} filter
  *
  * @return {Boolean}
  */
-Choice.prototype.matchers.valueOptionMatcher = function(option, filters)
+Choice.prototype.matchers.valueOptionMatcher = function(filter, option)
 {
-    return $.isArray(filters) ? filters.indexOf(option.value) >= 0 : filters === option.value;
+    return $.isArray(filter) ? filter.indexOf(option.value) >= 0 : filter === option.value;
 };
 
 /**
  * Choose a matcher according to the given options
  *
- * @param {Object} options
+ * @param {mixed} matcher
  *
  * @return {Function}
  */
-Choice.prototype.parseMatcher = function(options)
+Choice.prototype.parseMatcher = function(matcher)
 {
-    var type = typeof(options.matcher);
+    var type = typeof(matcher);
 
     if (type == 'function') {
-        return options.matcher;
+        return matcher;
     }
 
-    if (type == 'string' && typeof(this.matchers[options.matcher]) != 'undefined') {
-        return this.matchers[options.matcher];
+    if (type == 'string' && typeof(this.matchers[matcher]) != 'undefined') {
+        return this.matchers[matcher];
     }
 
     return this.matchers.valueOptionMatcher;

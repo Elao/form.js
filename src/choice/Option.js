@@ -17,13 +17,13 @@ function Option(element, parent, data)
 /**
  * Filter the option
  *
- * @param {Array} filters
+ * @param {Array} filter
  */
-Option.prototype.filter = function(filters)
+Option.prototype.filter = function(filter, matcher)
 {
     this.detach();
 
-    if (this.match(filters)) {
+    if (this.match(filter, matcher)) {
         this.attach();
     } else {
         this.handleSelection();
@@ -72,13 +72,13 @@ Option.prototype.triggerChange = function()
 /**
  * Filter
  *
- * @param {Array} filters
+ * @param {Array} filter
  *
  * @return {Boolean}
  */
-Option.prototype.match = function(filters)
+Option.prototype.match = function(filter, matcher)
 {
-    return this.parent.matcher(this, filters);
+    return matcher(filter, this);
 };
 
 /**
