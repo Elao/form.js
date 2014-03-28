@@ -1,8 +1,8 @@
 # Choice
 
-The Choice plugin is ment to be the Javascript side of the [Symfony2 Choice Type](http://symfony.com/doc/current/reference/forms/types/choice.html).
+The Choice plugin is meant to be the Javascript side of the [Symfony2 Choice Type](http://symfony.com/doc/current/reference/forms/types/choice.html).
 
-A Choice is a form field that ask the user to pick none, one or several values in a defined set of value.
+A Choice is a form field that asks the user to pick none, one or several values in a defined set of values.
 A Choice field by default is 'collapsed': a `select` tag.
 A Choice field can be 'expanded' in wich case it's a group of radio or checkbox inputs.
 A Choice field can be 'multiple', allowing the user to pick several values in the set, in witch case it's either a group of checkbox or a select tag with a 'multiple' attribute.
@@ -105,7 +105,7 @@ $("#expanded-multiple").choice();
 
 ## Features
 
-The Choice javascript object that hold all the logic and data of the choice, it's stored in the 'choice' data attribute of the element.
+The Choice javascript object that holds all the logic and data of the choice, it's stored in the 'choice' data attribute of the element.
 You can access it like that:
 
 ```javascript
@@ -153,7 +153,7 @@ function(filter, option)
 
 That's what appen when you dont provide a `matcher`.
 
-So you can write your own matcher as long as it's a function that follow that pattern:
+So you can write your own matcher as long as it's a function that follows this pattern:
 
 ```javascript
 /**

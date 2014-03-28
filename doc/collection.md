@@ -1,8 +1,8 @@
 # Collection
 
-The Collection plugin is ment to be the Javascript side of the [Symfony2 Collection Type](http://symfony.com/doc/current/reference/forms/types/collection.html).
+The Collection plugin is meant to be the Javascript side of the [Symfony2 Collection Type](http://symfony.com/doc/current/reference/forms/types/collection.html).
 
-A Collection is a form field that hold a list of sub forms of the same type.
+A Collection is a form field that holds a list of sub forms of the same type.
 Items can be added or removed from the list (optional).
 You can set a minimum and a maximum length for the collection.
 
