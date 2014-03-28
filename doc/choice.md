@@ -168,6 +168,7 @@ function(filter, option)
 {
     // Does the option match the current filter?
 }
+```
 
 #### The Option object:
 
