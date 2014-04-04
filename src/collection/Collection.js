@@ -18,14 +18,17 @@ function Collection (element, options)
     this.htmlPrototype = null;
     this.addButton     = null;
     this.items         = null;
+    this.clearData     = typeof(options.clearData) == 'undefined' || options.clearData;
 
-    this.parseItems();
     this.parseAdd();
     this.parseDelete();
     this.parseMin();
     this.parseMax();
+    this.parseItems();
 
-    this.element.removeAttr('data-collection');
+    if (this.clearData) {
+        this.element.removeAttr('data-collection');
+    }
 }
 
 /**
@@ -33,6 +36,10 @@ function Collection (element, options)
  */
 Collection.prototype.updateLimit = function ()
 {
+    if (!this.items) {
+        return false;
+    }
+
     if (this.min) {
         this.limitMin = this.count() <= this.min;
 
@@ -100,7 +107,7 @@ Collection.prototype.remove = function (item)
  */
 Collection.prototype.getPrototype = function ()
 {
-    return new CollectionItem(this, $(this.htmlPrototype.replace(this.replaceKey, this.currentKey)));
+    return new CollectionItem(this, this.htmlPrototype.replace(this.replaceKey, this.currentKey));
 };
 
 /**
@@ -108,7 +115,7 @@ Collection.prototype.getPrototype = function ()
  */
 Collection.prototype.parseAdd = function()
 {
-    var addButtonId = this.element.data('add');
+    var addButtonId = this.element.data('collection-add');
 
     this.htmlPrototype = this.element.data('prototype');
     this.element.removeAttr('data-prototype');
@@ -117,7 +124,10 @@ Collection.prototype.parseAdd = function()
         this.allowAdd  = true;
         this.addButton = $('#' + addButtonId);
         this.addButton.on('click', this.add.bind(this));
-        this.element.removeAttr('data-add');
+
+        if (this.clearData) {
+            this.element.removeAttr('data-collection-add');
+        }
     }
 };
 
@@ -126,9 +136,12 @@ Collection.prototype.parseAdd = function()
  */
 Collection.prototype.parseDelete = function()
 {
-    if (this.element.data('delete')) {
+    if (this.element.data('collection-delete')) {
         this.allowDelete = true;
-        this.element.removeAttr('data-delete');
+
+        if (this.clearData) {
+            this.element.removeAttr('data-collection-delete');
+        }
     }
 };
 
@@ -142,7 +155,11 @@ Collection.prototype.parseMin = function()
     if (min) {
         this.min = min;
         this.element.on('collection:deleted', this.updateLimit.bind(this));
-        this.element.removeAttr('data-collection-min');
+
+        if (this.clearData) {
+            this.element.removeAttr('data-collection-min');
+        }
+
         this.updateLimit();
     }
 };
@@ -157,7 +174,11 @@ Collection.prototype.parseMax = function()
     if (max) {
         this.max = max;
         this.element.on('collection:added', this.updateLimit.bind(this));
-        this.element.removeAttr('data-collection-max');
+
+        if (this.clearData) {
+            this.element.removeAttr('data-collection-max');
+        }
+
         this.updateLimit();
     }
 };
@@ -178,5 +199,7 @@ Collection.prototype.parseItems = function()
         for (var i = 0; i < length; i++) {
             this.items.push(new CollectionItem(this, items[i]));
         }
+
+        this.updateLimit();
     }
 };

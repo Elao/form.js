@@ -131,17 +131,23 @@
         this.htmlPrototype = null;
         this.addButton = null;
         this.items = null;
-        this.parseItems();
+        this.clearData = typeof options.clearData == "undefined" || options.clearData;
         this.parseAdd();
         this.parseDelete();
         this.parseMin();
         this.parseMax();
-        this.element.removeAttr("data-collection");
+        this.parseItems();
+        if (this.clearData) {
+            this.element.removeAttr("data-collection");
+        }
     }
     /**
  * Update limit
  */
     Collection.prototype.updateLimit = function() {
+        if (!this.items) {
+            return false;
+        }
         if (this.min) {
             this.limitMin = this.count() <= this.min;
             for (var i = this.items.length - 1; i >= 0; i--) {
@@ -192,29 +198,33 @@
  * @return {Element}
  */
     Collection.prototype.getPrototype = function() {
-        return new CollectionItem(this, $(this.htmlPrototype.replace(this.replaceKey, this.currentKey)));
+        return new CollectionItem(this, this.htmlPrototype.replace(this.replaceKey, this.currentKey));
     };
     /**
  * Parse add button
  */
     Collection.prototype.parseAdd = function() {
-        var addButtonId = this.element.data("add");
+        var addButtonId = this.element.data("collection-add");
         this.htmlPrototype = this.element.data("prototype");
         this.element.removeAttr("data-prototype");
         if (addButtonId) {
             this.allowAdd = true;
             this.addButton = $("#" + addButtonId);
             this.addButton.on("click", this.add.bind(this));
-            this.element.removeAttr("data-add");
+            if (this.clearData) {
+                this.element.removeAttr("data-collection-add");
+            }
         }
     };
     /**
  * Parse add button
  */
     Collection.prototype.parseDelete = function() {
-        if (this.element.data("delete")) {
+        if (this.element.data("collection-delete")) {
             this.allowDelete = true;
-            this.element.removeAttr("data-delete");
+            if (this.clearData) {
+                this.element.removeAttr("data-collection-delete");
+            }
         }
     };
     /**
@@ -225,7 +235,9 @@
         if (min) {
             this.min = min;
             this.element.on("collection:deleted", this.updateLimit.bind(this));
-            this.element.removeAttr("data-collection-min");
+            if (this.clearData) {
+                this.element.removeAttr("data-collection-min");
+            }
             this.updateLimit();
         }
     };
@@ -237,7 +249,9 @@
         if (max) {
             this.max = max;
             this.element.on("collection:added", this.updateLimit.bind(this));
-            this.element.removeAttr("data-collection-max");
+            if (this.clearData) {
+                this.element.removeAttr("data-collection-max");
+            }
             this.updateLimit();
         }
     };
@@ -253,6 +267,7 @@
             for (var i = 0; i < length; i++) {
                 this.items.push(new CollectionItem(this, items[i]));
             }
+            this.updateLimit();
         }
     };
     /**
@@ -263,12 +278,9 @@
  */
     function CollectionItem(collection, element) {
         this.collection = collection;
-        this.element = element;
-        var deleteButton = $('[data-delete="' + this.element[0].id + '"]', element);
-        if (this.collection.allowDelete && deleteButton) {
-            this.deleteButton = deleteButton;
-            this.deleteButton.on("click", this.remove.bind(this));
-        }
+        this.element = $(element);
+        this.deleteButton = null;
+        this.parseDelete();
     }
     /**
  * Remove item from collection
@@ -282,6 +294,18 @@
     CollectionItem.prototype.toggleDelete = function(toggle) {
         if (this.deleteButton) {
             this.deleteButton.toggle(toggle);
+        }
+    };
+    /**
+ * Parse delete
+ */
+    CollectionItem.prototype.parseDelete = function() {
+        if (this.deleteButton === null) {
+            var deleteButton = $('[data-collection-delete="' + this.element[0].id + '"]', this.element);
+            if (this.collection.allowDelete && deleteButton) {
+                this.deleteButton = deleteButton;
+                this.deleteButton.on("click", this.remove.bind(this));
+            }
         }
     };
     /**
