@@ -8,7 +8,7 @@ You can set a minimum and a maximum length for the collection.
 
 ## Setting up your form:
 
-The collection need several options:
+The collection needs several options:
 
 __Required options:__
 
@@ -17,12 +17,12 @@ __Required options:__
 
 __Optional options:__
 
-* _add:_ (string) The ID of the add button for the collection. Specifying this option allow the the user to new element to the collection.
-* _delete:_ (string) The Class of the delete buttons for collection items. Specifying this option allow the user to remove of existing element from the collection.
+* _add:_ (string) The ID of the add button for the collection. Specifying this option allows the user to add a new element to the collection.
+* _delete:_ (string) The Class of the delete buttons for collection items. Specifying this option allows the user to remove existing element from the collection.
 * _min:_ (integer) The minimum number of element the collection should contain (prevent item from being deleted if the minimum number of items is not reached).
 * _max_:_ (integer) The maximum number of element the collection should contain (prevent item from being added if the  maximum number of items is reached).
 
-The easier way to specify this options is to set the correct `data-` attributes to the collection root element, as below:
+The easiest way to specify these options is to set the correct `data-` attribute to the collection root element, as below:
 
 ```html
 <!-- The collection -->
@@ -49,7 +49,7 @@ The easier way to specify this options is to set the correct `data-` attributes 
 </div>
 ```
 
-## Initialise the collection:
+## Initialize the collection:
 
 Automatically on all collection fields:
 
