@@ -3,15 +3,18 @@
 The Choice plugin is meant to be the Javascript side of the [Symfony2 Choice Type](http://symfony.com/doc/current/reference/forms/types/choice.html).
 
 A Choice is a form field that asks the user to pick none, one or several values in a defined set of values.
-A Choice field by default is 'collapsed': a `select` tag.
-A Choice field can be 'expanded' in wich case it's a group of radio or checkbox inputs.
-A Choice field can be 'multiple', allowing the user to pick several values in the set, in witch case it's either a group of checkbox or a select tag with a 'multiple' attribute.
 
-## Initialise the choice:
+A Choice field can be:
 
-### Collapsed choice (select tag):
+* `collapsed` i.e. a select tag (default behaviour)
+* `expanded` in which case it's a group of radio or checkbox inputs
+* `multiple`, allowing the user to pick several values in the set, in which case it's either a group of checkbox or a select tag with a 'multiple' attribute.
 
-#### Single:
+## Initialize the choice
+
+### Collapsed choice (select tag)
+
+#### Single
 
 ```html
 <!-- Collapsed single choice -->
@@ -24,7 +27,7 @@ A Choice field can be 'multiple', allowing the user to pick several values in th
 </form>
 ```
 
-#### Multiple:
+#### Multiple
 
 ```html
 <!-- Collapsed multiple choice -->
@@ -43,9 +46,9 @@ __Initialise both choices:__
 $("select").choice();
 ```
 
-### Expanded choice (radio or checkboxe input tags):
+### Expanded choice (radio or checkbox input tags)
 
-#### Single:
+#### Single
 
 ```html
 <!-- Expanded single choice -->
@@ -65,6 +68,7 @@ $("select").choice();
         </label>
     </fieldset>
 </form>
+````
 
 __Initialise this specific choice:__
 
@@ -72,10 +76,10 @@ __Initialise this specific choice:__
 $("#expanded-single").choice();
 ```
 
-_Note:_ The choice should be initiated on a single container element (it doesn't have to be a `fieldset` tag).
-The container should have exactly a children for each choice: no more, no less (it doesn't have to be `label` tags).
+_Note:_ The choice should be initialized on a single container element (it doesn't have to be a `fieldset` tag).
+The container should have exactly one child for each choice: no more, no less! (it doesn't have to be `label` tags).
 
-#### Multiple:
+#### Multiple
 
 ```html
 <!-- Expanded multiple choice -->
@@ -97,15 +101,14 @@ The container should have exactly a children for each choice: no more, no less (
 </form>
 ```
 
-__Initialise this specific choice:__
-
+__Initialize this specific choice:__
 ```javascript
 $("#expanded-multiple").choice();
 ```
 
 ## Features
 
-The Choice javascript object that holds all the logic and data of the choice, it's stored in the 'choice' data attribute of the element.
+The Choice javascript object that holds all the logic and data of the choice is stored in the 'choice' data attribute of the element.
 You can access it like that:
 
 ```javascript
@@ -113,18 +116,19 @@ $("#my-choice-field").choice();
 var choice = $("#my-choice-field").data('choice');
 ```
 
-The choice object provide a set of useful feature and informations:
+The choice object provides a set of useful feature and informations.
 
 ### Value
 
 The value is accessible via the 'value' property:
 
-For a single choice, will return a scalar corresponding to the current selected option value:
+For a single choice, it will return a scalar corresponding to the current selected option value:
 ```javascript
 /* (Integer) 1 */
 $("#expanded-single").data('choice').value;
+````
 
-For a multiple choice, will return a array of scalar corresponding to the current selected options value:
+For a multiple choice, it will return an array of scalars corresponding to the current selected options value:
 ```javascript
 /* (Array) [1,2] */
 $("#expanded-multiple").data('choice').value;
@@ -132,7 +136,7 @@ $("#expanded-multiple").data('choice').value;
 
 ### Filter
 
-You can easily filter the options available in the choice via the `filter(filter)` method.
+You can easily filter the available options via the `filter(filter)` method.
 
 Just pass the values that should be available in the choice:
 ```javascript
@@ -140,9 +144,9 @@ $("#expanded-multiple").data('choice').filter([0,2]);
 ```
 
 The filter method accepts a second parameter 'matcher': `filter(filter, matcher)`
-The matcher is a callback function that will be called on each option and that should return weither or not the option match the given filter.
+The matcher is a callback function that will be called on each option. It should return whether the option matches the given filter.
 
-The default matcher juste tests that the option value is contained in the given filter:
+The default matcher just tests that the option value is contained in the given filter:
 
 ```javascript
 function(filter, option)
@@ -151,7 +155,7 @@ function(filter, option)
 };
 ```
 
-That's what appen when you dont provide a `matcher`.
+That's what happen when you don't provide a custom `matcher`.
 
 So you can write your own matcher as long as it's a function that follows this pattern:
 
@@ -159,7 +163,7 @@ So you can write your own matcher as long as it's a function that follows this p
 /**
  * Matcher
  *
- * @param {mixed} Filter Your filter
+ * @param {mixed} filter Your filter
  * @param {Option} option The current Option element
  *
  * @return {Boolean}
@@ -172,7 +176,7 @@ function(filter, option)
 
 #### The Option object:
 
-To help you determine if the option match the current filter, the Optino object has two interesting properties:
+To help you determine if the option matches the current filter, the Option object has two interesting properties:
 
 * `option.value`: is the value of the element.
-* `option.data`: an object containing the "data-*" attributes of the element.
+* `option.data`: an object containing all the "data-*" attributes of the element.
