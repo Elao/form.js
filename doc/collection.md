@@ -63,6 +63,16 @@ or on a specific field:
 $('#my_collection_field').collection();
 ```
 
+## Usage
+
+The Collection javascript object that holds all the logic and data of the collection is stored in the 'collection' data attribute of the element.
+You can access it like that:
+
+```javascript
+$("#my-collection-field").collection();
+var collection = $("#my-collection-field").data('collection');
+```
+
 __Callbacks:__
 
 Callbacks are called before `adding` and `removing` items in the collection.
