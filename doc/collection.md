@@ -68,15 +68,15 @@ __Callbacks:__
 Callbacks are called before `adding` and `removing` items in the collection.
 They allow you to inject your custom logic and prevent item from being added/removed when you need it.
 
-* _add:_ (function) A callback called in the Collection's context and taking as a parameter the item to add, that should return a boolean: whether the new item should be added.
-* _remove:_ (function) A callback called in the Collection's context and taking as a parameter the item to remove, that should return a boolean: whether the given item should be removed.
+* _onAdd:_ (function) A callback called in the Collection's context and taking as a parameter the item to add, that should return a boolean: whether the new item should be added.
+* _onRemove:_ (function) A callback called in the Collection's context and taking as a parameter the item to remove, that should return a boolean: whether the given item should be removed.
 
 Callbacks have to be specified when setting up the collection, as below:
 
 ```javascript
 $('#my_collection_field').collection({
-    add: function (item) { return confirm('Are you sure you want to add an item?'); },
-    remove: function (item) { return confirm('Are you sure you want to delete this item?'); },
+    onAdd: function (item) { return confirm('Are you sure you want to add an item?'); },
+    onRemove: function (item) { return confirm('Are you sure you want to delete this item?'); },
 });
 ```
 

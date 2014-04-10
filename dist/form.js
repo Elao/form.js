@@ -132,16 +132,17 @@
         this.addButton = null;
         this.items = null;
         this.clearData = typeof options.clearData == "undefined" || options.clearData;
-        this.callbackAdd = typeof options.add == "function" ? options.add : false;
-        this.callbackRemove = typeof options.remove == "function" ? options.remove : false;
-        this.parseAdd();
-        this.parseDelete();
-        this.parseMin();
-        this.parseMax();
-        this.parseItems();
+        this.onAdd = typeof options.onAdd == "function" ? options.onAdd : false;
+        this.onRemove = typeof options.onRemove == "function" ? options.onRemove : false;
+        this.parseAdd(options);
+        this.parseDelete(options);
+        this.parseMin(options);
+        this.parseMax(options);
+        this.parseItems(options);
         if (this.clearData) {
             this.element.removeAttr("data-collection");
         }
+        this.element.data("collection", this);
     }
     /**
  * Update limit
@@ -175,7 +176,7 @@
  * @return {boolean}
  */
     Collection.prototype.canAdd = function(item) {
-        return this.allowAdd && !this.limitMax && (this.callbackAdd ? this.callbackAdd.call(this, item) : true);
+        return this.allowAdd && !this.limitMax && (this.onAdd ? this.onAdd.call(this, item) : true);
     };
     /**
  * Can add?
@@ -183,7 +184,7 @@
  * @return {boolean}
  */
     Collection.prototype.canRemove = function(item) {
-        return this.allowDelete && !this.limitMin && (this.callbackRemove ? this.callbackRemove.call(this, item) : true);
+        return this.allowDelete && !this.limitMin && (this.onRemove ? this.onRemove.call(this, item) : true);
     };
     /**
  * Add a new item
