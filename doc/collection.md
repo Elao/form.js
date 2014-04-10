@@ -10,12 +10,12 @@ You can set a minimum and a maximum length for the collection.
 
 The collection needs several options:
 
-__Required options:__
+__Required configuration:__
 
 * _collection:_ (string) The name of the placeholder to replace in the prototype
 * _prototype:_ (string) The HTML code of the prototype of the collection.
 
-__Optional options:__
+__Optional configuration:__
 
 * _add:_ (string) The ID of the add button for the collection. Specifying this option allows the user to add a new element to the collection.
 * _delete:_ (string) The Class of the delete buttons for collection items. Specifying this option allows the user to remove existing element from the collection.
@@ -30,9 +30,9 @@ The easiest way to specify these options is to set the correct `data-` attribute
     <div
         id="my-collection"
         data-collection="__name__"
-        data-prototype="..."
-        data-add="my-collection-add"
-        data-delete="my-collection-delete"
+        data-collection-prototype="..."
+        data-collection-add="my-collection-add"
+        data-collection-delete="my-collection-delete"
         data-collection-max="3"
         data-collection-min="1"
     >
@@ -62,3 +62,22 @@ or on a specific field:
 ```javascript
 $('#my_collection_field').collection();
 ```
+
+__Callbacks:__
+
+Callbacks are called before `adding` and `removing` items in the collection.
+They allow you to inject your custom logic and prevent item from being added/removed when you need it.
+
+* _add:_ (function) A callback called in the Collection's context and taking as a parameter the item to add, that should return a boolean: whether the new item should be added.
+* _remove:_ (function) A callback called in the Collection's context and taking as a parameter the item to remove, that should return a boolean: whether the given item should be removed.
+
+Callbacks have to be specified when setting up the collection, as below:
+
+```javascript
+$('#my_collection_field').collection({
+    add: function (item) { return confirm('Are you sure you want to add an item?'); },
+    remove: function (item) { return confirm('Are you sure you want to delete this item?'); },
+});
+```
+
+

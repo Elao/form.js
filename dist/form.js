@@ -132,6 +132,8 @@
         this.addButton = null;
         this.items = null;
         this.clearData = typeof options.clearData == "undefined" || options.clearData;
+        this.callbackAdd = typeof options.add == "function" ? options.add : false;
+        this.callbackRemove = typeof options.remove == "function" ? options.remove : false;
         this.parseAdd();
         this.parseDelete();
         this.parseMin();
@@ -168,11 +170,27 @@
         return this.element.children().length;
     };
     /**
+ * Can add?
+ *
+ * @return {boolean}
+ */
+    Collection.prototype.canAdd = function(item) {
+        return this.allowAdd && !this.limitMax && (this.callbackAdd ? this.callbackAdd.call(this, item) : true);
+    };
+    /**
+ * Can add?
+ *
+ * @return {boolean}
+ */
+    Collection.prototype.canRemove = function(item) {
+        return this.allowDelete && !this.limitMin && (this.callbackRemove ? this.callbackRemove.call(this, item) : true);
+    };
+    /**
  * Add a new item
  */
     Collection.prototype.add = function() {
-        if (this.allowAdd && !this.limitMax) {
-            var item = this.getPrototype();
+        var item = this.getPrototype();
+        if (this.canAdd(item)) {
             this.items.push(item);
             this.element.append(item.element);
             this.currentKey++;
@@ -186,8 +204,8 @@
  */
     Collection.prototype.remove = function(item) {
         var index = this.items.indexOf(item);
-        if (this.allowDelete && !this.limitMin && index >= 0) {
-            this.items = this.items.slice(0, index).concat(this.items.slice(index + 1));
+        if (index >= 0 && this.canRemove()) {
+            this.items.splice(index, 1);
             item.element.remove();
             this.element.trigger("collection:deleted", [ item ]);
         }
