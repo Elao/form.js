@@ -205,7 +205,7 @@
  */
     Collection.prototype.remove = function(item) {
         var index = this.items.indexOf(item);
-        if (index >= 0 && this.canRemove()) {
+        if (index >= 0 && this.canRemove(item)) {
             this.items.splice(index, 1);
             item.element.remove();
             this.element.trigger("collection:deleted", [ item ]);
