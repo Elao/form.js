@@ -1,6 +1,6 @@
 {
-  "name": "form.js",
-  "version": "0.0.1",
+  "name": "elao-form.js",
+  "version": "0.1.0",
   "main": "dist/form.js",
   "license": "MIT",
   "dependencies": {
@@ -13,6 +13,7 @@
   ],
   "description": "Form JS utilities",
   "keywords": [
+    "jquery",
     "form"
   ],
   "ignore": [

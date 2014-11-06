@@ -1,10 +1,25 @@
 {
-  "name": "form.js",
+  "name": "elao-form.js",
   "description": "Form JS utilities",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://raw.githubusercontent.com/Elao/form.js/master/LICENSE"
+    }
+  ],
+  "homepage": "https://github.com/Elao/form.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Elao/form.js"
+  },
+  "bugs": {
+    "url": "https://github.com/Elao/form.js/issues"
+  },
   "author": {
     "name": "Elao",
-    "url" : "http://elao.com"
+    "email": "contact@elao.com",
+    "url": "http://www.elao.com/"
   },
   "contributors": [
     {
@@ -12,11 +27,21 @@
       "url" : "http://thomas-jarrand.com"
     }
   ],
+  "tags": [
+    "jquery",
+    "form"
+  ],
+  "main": "dist/form.js",
+  "dependencies": {
+    "jquery": ">=1.9"
+  },
   "devDependencies": {
-    "grunt"                 : "~0.4.2",
-    "grunt-contrib-jshint"  : "~0.6.3",
-    "grunt-contrib-nodeunit": "~0.2.0",
-    "grunt-contrib-uglify"  : "~0.2.2",
-    "grunt-contrib-watch": "~0.6.0"
+    "grunt"                 : "0.4.*",
+    "grunt-contrib-concat"  : "0.5.*",
+    "grunt-umd"             : "2.0.*",
+    "grunt-banner"          : "0.2.*",
+    "grunt-contrib-uglify"  : "0.6.*",
+    "grunt-contrib-jshint"  : "0.10.*",
+    "grunt-contrib-watch"   : "0.6.*"
   }
 }

@@ -15,65 +15,89 @@ var files = {
 
 module.exports = function(grunt) {
 
-  // Project configuration.
+  // Configuration.
   grunt.initConfig({
-    package: grunt.file.readJSON('package.json'),
+
+    pkg: grunt.file.readJSON('package.json'),
 
     banner: [
       '/*!',
-      ' * <%= package.name %> <%= package.version %>',
+      ' * <%= pkg.name %> <%= pkg.version %>',
       ' * http://github.com/Elao/form.js',
       ' * Copyright 2014 Elao and other contributors; Licensed MIT',
-      ' */\n\n'
+      ' */\n'
     ].join('\n'),
+
+    concat: {
+      dist: {
+        src:  [].concat(files.helper, files.collection, files.choice, files.jquery),
+        dest: 'dist/form.js'
+      }
+    },
+
+    umd: {
+      dist: {
+        src:    '<%= concat.dist.dest %>',
+        indent: '    ',
+        deps:   {
+          'default': ['$'],
+          amd:       ['jquery'],
+          cjs:       ['jquery'],
+          global:    ['jQuery']
+        }
+      }
+    },
+
+    usebanner: {
+      dist: {
+        options: {
+          banner: '<%= banner %>'
+        },
+        files: {
+          src: '<%= concat.dist.dest %>'
+        }
+      }
+    },
 
     uglify: {
       min: {
         options: {
-          banner: '<%= banner %>',
-          enclose: { 'jQuery': '$' }
+          preserveComments: 'some'
         },
         files: {
-          'dist/form.min.js': [].concat(files.helper, files.collection, files.choice, files.jquery),
-        }
-      },
-      full: {
-        options: {
-          banner: '<%= banner %>',
-          enclose: { 'jQuery': '$' },
-          preserveComments: 'all',
-          beautify: true,
-          mangle: false,
-          compress: false
-        },
-        files: {
-          'dist/form.js': [].concat(files.helper, files.collection, files.choice, files.jquery),
+          'dist/form.min.js': '<%= concat.dist.dest %>'
         }
       }
     },
+
     jshint: {
-      src: 'src/**/*.js',
+      src:       'src/**/*.js',
       gruntfile: ['Gruntfile.js']
     },
+
     watch: {
       scripts: {
-        files: 'src/**/*.js',
-        tasks: ['build'],
+        files:   'src/**/*.js',
+        tasks:   ['build'],
         options: {
           interrupt: true,
-          atBegin: true
-        },
-      },
-    },
+          atBegin:   true
+        }
+      }
+    }
+
   });
 
-  // Load the plugin that provides the "uglify" task.
-  grunt.loadNpmTasks('grunt-contrib-watch');
+  // Plugins
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-umd');
+  grunt.loadNpmTasks('grunt-banner');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-jshint');
 
-  // Default task(s).
+  // Tasks
   grunt.registerTask('default', 'build');
-  grunt.registerTask('build', ['jshint', 'uglify']);
+  grunt.registerTask('build', ['jshint', 'concat', 'umd', 'usebanner', 'uglify']);
   grunt.registerTask('lint', 'jshint');
 };
