@@ -15,7 +15,7 @@ function Choice(element, options)
         length = children.length;
 
     for (var i = 0; i < length; i++) {
-        var option = new Option(children[i], this, typeof(options.data) != 'undefined' ? options.data : null);
+        var option = new Option(children[i], this, typeof options.data != 'undefined' ? options.data : null);
 
         if (option.value !== '' && option.value !== null) {
             this.choices.push(option);
@@ -147,13 +147,13 @@ Choice.prototype.matchers.valueOptionMatcher = function(filter, option)
  */
 Choice.prototype.parseMatcher = function(matcher)
 {
-    var type = typeof(matcher);
+    var type = typeof matcher;
 
     if (type == 'function') {
         return matcher;
     }
 
-    if (type == 'string' && typeof(this.matchers[matcher]) != 'undefined') {
+    if (type == 'string' && typeof this.matchers[matcher] != 'undefined') {
         return this.matchers[matcher];
     }
 

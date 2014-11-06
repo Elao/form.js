@@ -4,7 +4,7 @@
  * @param {Element} element
  * @param {Object} options
  */
-function Collection (element, options)
+function Collection(element, options)
 {
     this.element       = $(element);
     this.replaceKey    = new RegExp(this.element.data('collection'), 'g');
@@ -18,9 +18,9 @@ function Collection (element, options)
     this.htmlPrototype = null;
     this.addButton     = null;
     this.items         = null;
-    this.clearData     = typeof(options.clearData) == 'undefined' || options.clearData;
-    this.onAdd         = typeof(options.onAdd) == 'function' ? options.onAdd : false;
-    this.onRemove      = typeof(options.onRemove) == 'function' ? options.onRemove : false;
+    this.clearData     = typeof options.clearData == 'undefined' || options.clearData;
+    this.onAdd         = typeof options.onAdd == 'function' ? options.onAdd : false;
+    this.onRemove      = typeof options.onRemove == 'function' ? options.onRemove : false;
 
     this.parseAdd(options);
     this.parseDelete(options);
@@ -38,7 +38,7 @@ function Collection (element, options)
 /**
  * Update limit
  */
-Collection.prototype.updateLimit = function ()
+Collection.prototype.updateLimit = function()
 {
     if (!this.items) {
         return false;
@@ -64,7 +64,7 @@ Collection.prototype.updateLimit = function ()
  *
  * @return {Number}
  */
-Collection.prototype.count = function ()
+Collection.prototype.count = function()
 {
     return this.element.children().length;
 };
@@ -92,7 +92,7 @@ Collection.prototype.canRemove = function(item)
 /**
  * Add a new item
  */
-Collection.prototype.add = function ()
+Collection.prototype.add = function()
 {
     var item = this.getPrototype();
 
@@ -102,7 +102,7 @@ Collection.prototype.add = function ()
         this.element.append(item.element);
         this.currentKey++;
 
-        this.element.trigger("collection:added", [item]);
+        this.element.trigger('collection:added', [item]);
     }
 };
 
@@ -111,14 +111,14 @@ Collection.prototype.add = function ()
  *
  * @param {CollectionItem} item
  */
-Collection.prototype.remove = function (item)
+Collection.prototype.remove = function(item)
 {
     var index = this.items.indexOf(item);
 
     if (index >= 0 && this.canRemove(item)) {
         this.items.splice(index, 1);
         item.element.remove();
-        this.element.trigger("collection:deleted", [item]);
+        this.element.trigger('collection:deleted', [item]);
     }
 };
 
@@ -127,7 +127,7 @@ Collection.prototype.remove = function (item)
  *
  * @return {Element}
  */
-Collection.prototype.getPrototype = function ()
+Collection.prototype.getPrototype = function()
 {
     return new CollectionItem(this, this.htmlPrototype.replace(this.replaceKey, this.currentKey));
 };

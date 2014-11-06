@@ -11,7 +11,7 @@ function Option(element, parent, data)
     this.parent       = parent;
     this.valueElement = this.parent.expanded ? this.element.find('input[type="' + (this.parent.multiple ? 'checkbox' : 'radio') + '"]:first') : this.element;
     this.value        = smartParse(this.valueElement.val());
-    this.data         = typeof(data) == 'function' ? data.call(this) : this.element.data();
+    this.data         = typeof data == 'function' ? data.call(this) : this.element.data();
 }
 
 /**

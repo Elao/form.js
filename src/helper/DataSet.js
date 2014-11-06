@@ -40,7 +40,7 @@ DataSet.prototype.index = function(elements)
  */
 DataSet.prototype.addElement = function(element, index)
 {
-    if (typeof(this.elements[index]) == 'undefined') {
+    if (typeof this.elements[index] == 'undefined') {
         this.elements[index] = $(element);
         this.elements[index].on('change', this.onElementChange);
     }
@@ -73,7 +73,7 @@ DataSet.prototype.parseData = function()
         for (var i = 0; i < length; i++) {
             value = smartParse(this.elements[i].val());
 
-            if (value !== null && value !== "") {
+            if (value !== null && value !== '') {
                 data[i] = value;
             }
         }
@@ -81,7 +81,7 @@ DataSet.prototype.parseData = function()
         for (var name in this.elements) {
             value = smartParse(this.elements[name].val());
 
-            if (value !== null && value !== "") {
+            if (value !== null && value !== '') {
                 data[name] = value;
             }
         }

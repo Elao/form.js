@@ -4,7 +4,7 @@
  * @param {Collection} collection
  * @param {Element} element
  */
-function CollectionItem (collection, element)
+function CollectionItem(collection, element)
 {
     this.collection   = collection;
     this.element      = $(element);
