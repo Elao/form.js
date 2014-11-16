@@ -11,7 +11,7 @@ function Option(element, parent, data)
     this.parent       = parent;
     this.valueElement = this.parent.expanded ? this.element.find('input[type="' + (this.parent.multiple ? 'checkbox' : 'radio') + '"]:first') : this.element;
     this.value        = smartParse(this.valueElement.val());
-    this.data         = typeof data == 'function' ? data.call(this) : this.element.data();
+    this.data         = typeof(data) == 'function' ? data.call(this) : this.element.data();
 }
 
 /**
@@ -86,7 +86,7 @@ Option.prototype.match = function(filter, matcher)
  */
 Option.prototype.attach = function()
 {
-    if (!this.element.parent().length) {
+    if (!this.isAttached()) {
         this.parent.element.append(this.element);
     }
 };
@@ -96,7 +96,17 @@ Option.prototype.attach = function()
  */
 Option.prototype.detach = function()
 {
-    if (this.element.parent().length) {
+    if (this.isAttached()) {
         this.element.remove();
     }
+};
+
+/**
+ * Is attached to DOM?
+ *
+ * @return {Boolean}
+ */
+Option.prototype.isAttached = function()
+{
+    return this.element.parent().length;
 };
