@@ -34,3 +34,4 @@ The jquery plugin minified version can be found in: `dist/form.min.js`.
 
 * [Collection](doc/collection.md)
 * [Choice](doc/choice.md)
+* [Change Confirmation](doc/change_confirmation.md)

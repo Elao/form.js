@@ -8,6 +8,9 @@ var files = {
   choice: [
     'src/choice/*.js',
   ],
+  change_confirmation: [
+    'src/change_confirmation/*.js',
+  ],
   helper: [
     'src/helper/*.js',
   ]
@@ -30,7 +33,7 @@ module.exports = function(grunt) {
 
     concat: {
       dist: {
-        src:  [].concat(files.helper, files.collection, files.choice, files.jquery),
+        src:  [].concat(files.helper, files.collection, files.choice, files.change_confirmation, files.jquery),
         dest: 'dist/form.js'
       }
     },
@@ -60,7 +63,7 @@ module.exports = function(grunt) {
     },
 
     uglify: {
-      min: {
+      min: {
         options: {
           preserveComments: 'some'
         },
