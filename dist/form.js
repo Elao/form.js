@@ -1,5 +1,5 @@
 /*!
- * elao-form.js 0.1.2
+ * elao-form.js 0.1.3
  * http://github.com/Elao/form.js
  * Copyright 2014 Elao and other contributors; Licensed MIT
  */
@@ -156,7 +156,7 @@
             } catch (e) {}
         }
 
-        return data;
+        return data === '' ? null : data;
     }
 
     /**
@@ -435,6 +435,7 @@
         }
     };
 
+
     /**
      * Choice
      *
@@ -448,22 +449,55 @@
         this.choices  = [];
         this.value    = null;
 
-        var children = this.element.children(),
-            length = children.length;
-
-        for (var i = 0; i < length; i++) {
-            var option = new Option(children[i], this, typeof options.data != 'undefined' ? options.data : null);
-
-            if (option.value !== '' && option.value !== null) {
-                this.choices.push(option);
-            }
-        }
+        this.addOptions(this.element, typeof options.data != 'undefined' ? options.data : null);
 
         this.element.on('change', this.updateValue.bind(this));
         this.updateValue();
     }
 
+    /**
+     * Available matchers
+     *
+     * @type {Object}
+     */
     Choice.prototype.matchers = {};
+
+    /**
+     * Add options
+     *
+     * @param {DOMElement} element
+     * @param {Object} data
+     */
+    Choice.prototype.addOptions = function(element, data)
+    {
+        var children = $(element).children(),
+            length = children.length;
+
+        for (var i = 0; i < length; i++) {
+            this.addOption(children[i], data);
+        }
+    };
+
+    /**
+     * Add option element
+     *
+     * @param {DOMElement} element
+     * @param {Object} data
+     */
+    Choice.prototype.addOption = function(element, data)
+    {
+        var option;
+
+        if (element.tagName.toLowerCase() === 'optgroup') {
+            option = new OptionGroup(element, this, data);
+        } else {
+            option = new Option(element, this, data);
+        }
+
+        if (option.isValid()) {
+            this.choices.push(option);
+        }
+    };
 
     /**
      * Update value
@@ -551,15 +585,48 @@
 
     /**
      * Update the choice from filters
+     *
+     * @param {mixed} filter Value to filter by
+     * @param {String|Closure} matcher
      */
     Choice.prototype.filter = function(filter, matcher)
     {
         var length = this.choices.length;
-            matcher = this.parseMatcher(matcher);
+
+        matcher = this.parseMatcher(matcher);
 
         for (var i = 0; i < length; i++) {
             this.choices[i].filter(filter, matcher);
         }
+
+        return this;
+    };
+
+    /**
+     * Update the choice from filters
+     */
+    Choice.prototype.reset = function()
+    {
+        var length = this.choices.length;
+
+        for (var i = 0; i < length; i++) {
+            this.choices[i].attach();
+        }
+
+        return this;
+    };
+
+    /**
+     * Add matcher
+     *
+     * @param {String} name The name of the matcher
+     * @param {Function} callback
+     */
+    Choice.prototype.addMatcher = function(name, callback)
+    {
+        this.matchers[name] = callback;
+
+        return this;
     };
 
     /**
@@ -586,7 +653,7 @@
     {
         var type = typeof matcher;
 
-        if (type == 'function') {
+        if (type == 'function') {
             return matcher;
         }
 
@@ -627,6 +694,8 @@
         } else {
             this.handleSelection();
         }
+
+        return this;
     };
 
     /**
@@ -634,7 +703,7 @@
      */
     Option.prototype.handleSelection = function()
     {
-        if(this.isSelected()) {
+        if (this.isSelected()) {
             this.valueElement.prop(this.getSelectionProperty(), false);
             this.triggerChange();
         }
@@ -708,6 +777,37 @@
     Option.prototype.isAttached = function()
     {
         return this.element.parent().length;
+    };
+
+    /**
+     * Is valid
+     */
+    Option.prototype.isValid = function()
+    {
+        return this.value !== null;
+    };
+
+    /**
+     * Option
+     *
+     * @param {Element} element
+     * @param {Choice} parent
+     * @param {Function} data
+     */
+    function OptionGroup(element, parent, data)
+    {
+        Option.call(this, element, parent, data);
+    }
+
+    OptionGroup.prototype = Object.create(Option.prototype);
+    OptionGroup.prototype.constructor = OptionGroup;
+
+    /**
+     * Is valid
+     */
+    OptionGroup.prototype.isValid = function()
+    {
+        return this.element.children().length > 0;
     };
 
     /**

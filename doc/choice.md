@@ -174,6 +174,43 @@ function(filter, option)
 }
 ```
 
+__Example:__ Filter by `data-*` attribute
+
+```html
+<select id="country">
+    <option calue>All</option>
+    <option value="uk">United Kingdom</option>
+    <option value="de">Germany</option>
+    <option value="fr">France</option>
+</select>
+
+<select id="city">
+    <option value="1" data-country="uk">Lodon</option>
+    <option value="2" data-country="uk">Manchester</option>
+    <option value="3" data-country="de">Berlin</option>
+    <option value="4" data-country="fr">Paris</option>
+    <option value="5" data-country="fr">Lyon</option>
+    <option value="6" data-country="fr">Montpellier</option>
+</select>
+```
+
+```javascript
+var country = $('#country').choice().data('choice'),
+    city = $('#city').choice().data('choice');
+
+city.addMatcher('country', function (filter, option) {
+    return option.data.country === filter;
+});
+
+country.element.on('change', function (e) {
+    if (country.value === null) {
+        city.reset();
+    } else {
+        city.filter(country.value, 'country');
+    }
+});
+```
+
 #### The Option object:
 
 To help you determine if the option matches the current filter, the Option object has two interesting properties:

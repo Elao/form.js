@@ -28,6 +28,8 @@ Option.prototype.filter = function(filter, matcher)
     } else {
         this.handleSelection();
     }
+
+    return this;
 };
 
 /**
@@ -35,7 +37,7 @@ Option.prototype.filter = function(filter, matcher)
  */
 Option.prototype.handleSelection = function()
 {
-    if(this.isSelected()) {
+    if (this.isSelected()) {
         this.valueElement.prop(this.getSelectionProperty(), false);
         this.triggerChange();
     }
@@ -109,4 +111,12 @@ Option.prototype.detach = function()
 Option.prototype.isAttached = function()
 {
     return this.element.parent().length;
+};
+
+/**
+ * Is valid
+ */
+Option.prototype.isValid = function()
+{
+    return this.value !== null;
 };

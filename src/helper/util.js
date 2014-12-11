@@ -20,5 +20,5 @@ function smartParse(data)
         } catch (e) {}
     }
 
-    return data;
+    return data === '' ? null : data;
 }

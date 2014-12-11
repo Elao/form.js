@@ -1,3 +1,4 @@
+
 /**
  * Choice
  *
@@ -11,22 +12,55 @@ function Choice(element, options)
     this.choices  = [];
     this.value    = null;
 
-    var children = this.element.children(),
-        length = children.length;
-
-    for (var i = 0; i < length; i++) {
-        var option = new Option(children[i], this, typeof options.data != 'undefined' ? options.data : null);
-
-        if (option.value !== '' && option.value !== null) {
-            this.choices.push(option);
-        }
-    }
+    this.addOptions(this.element, typeof options.data != 'undefined' ? options.data : null);
 
     this.element.on('change', this.updateValue.bind(this));
     this.updateValue();
 }
 
+/**
+ * Available matchers
+ *
+ * @type {Object}
+ */
 Choice.prototype.matchers = {};
+
+/**
+ * Add options
+ *
+ * @param {DOMElement} element
+ * @param {Object} data
+ */
+Choice.prototype.addOptions = function(element, data)
+{
+    var children = $(element).children(),
+        length = children.length;
+
+    for (var i = 0; i < length; i++) {
+        this.addOption(children[i], data);
+    }
+};
+
+/**
+ * Add option element
+ *
+ * @param {DOMElement} element
+ * @param {Object} data
+ */
+Choice.prototype.addOption = function(element, data)
+{
+    var option;
+
+    if (element.tagName.toLowerCase() === 'optgroup') {
+        option = new OptionGroup(element, this, data);
+    } else {
+        option = new Option(element, this, data);
+    }
+
+    if (option.isValid()) {
+        this.choices.push(option);
+    }
+};
 
 /**
  * Update value
@@ -114,15 +148,48 @@ Choice.prototype.getSelection = function()
 
 /**
  * Update the choice from filters
+ *
+ * @param {mixed} filter Value to filter by
+ * @param {String|Closure} matcher
  */
 Choice.prototype.filter = function(filter, matcher)
 {
     var length = this.choices.length;
-        matcher = this.parseMatcher(matcher);
+
+    matcher = this.parseMatcher(matcher);
 
     for (var i = 0; i < length; i++) {
         this.choices[i].filter(filter, matcher);
     }
+
+    return this;
+};
+
+/**
+ * Update the choice from filters
+ */
+Choice.prototype.reset = function()
+{
+    var length = this.choices.length;
+
+    for (var i = 0; i < length; i++) {
+        this.choices[i].attach();
+    }
+
+    return this;
+};
+
+/**
+ * Add matcher
+ *
+ * @param {String} name The name of the matcher
+ * @param {Function} callback
+ */
+Choice.prototype.addMatcher = function(name, callback)
+{
+    this.matchers[name] = callback;
+
+    return this;
 };
 
 /**
@@ -149,7 +216,7 @@ Choice.prototype.parseMatcher = function(matcher)
 {
     var type = typeof matcher;
 
-    if (type == 'function') {
+    if (type == 'function') {
         return matcher;
     }
 
