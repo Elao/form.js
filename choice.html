@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Elao form.js - Choice</title>
+    <style type="text/css">
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        fieldset {
+            border: 1px solid #E5E5E5;
+            margin: 10px;
+            padding: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .container {
+            clear: both;
+        }
+
+        .column {
+            float: left;
+            width: 50%;
+        }
+    </style>
+</head>
+<body>
+    <fieldset>
+        <label for="country">Country:</label>
+        <select id="country">
+            <option value>All</option>
+            <option value="uk">United Kingdom</option>
+            <option value="de">Germany</option>
+            <option value="fr">France</option>
+        </select>
+        <p>Select a country to automatically filter the city choices.</p>
+    </fieldset>
+
+    <div class="container">
+        <div class="column">
+            <fieldset>
+                <label for="country">City: <small>(checkbox)</small></label>
+                <div id="city-expanded">
+                    <label data-country="uk"><input type="checkbox" value="1">Lodon</label>
+                    <label data-country="uk"><input type="checkbox" value="2">Manchester</label>
+                    <label data-country="de"><input type="checkbox" value="3">Berlin</label>
+                    <label data-country="fr"><input type="checkbox" value="4">Paris</label>
+                    <label data-country="fr"><input type="checkbox" value="5">Lyon</label>
+                    <label data-country="fr"><input type="checkbox" value="6">Montpellier</label>
+                </div>
+            </fieldset>
+        </div>
+        <div class="column">
+            <fieldset>
+                <label for="country">City: <small>(select)</small></label>
+                <select id="city-collapsed">
+                    <optgroup label="West">
+                        <option value="1" data-country="uk">London</option>
+                        <option value="2" data-country="uk">Manchester</option>
+                        <option value="4" data-country="fr">Paris</option>
+                        <option value="6" data-country="fr">Montpellier</option>
+                    </optgroup>
+                    <optgroup label="East">
+                        <option value="5" data-country="fr">Lyon</option>
+                        <option value="3" data-country="de">Berlin</option>
+                    </optgroup>
+                </select>
+            </fieldset>
+        </div>
+    </div>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="dist/form.js"></script>
+    <script>
+        var country = $('#country').choice().data('choice'),
+            cityExpanded = $('#city-expanded').choice().data('choice');
+            cityCollapsed = $('#city-collapsed').choice().data('choice');
+
+        function matchCountry (filter, option) {
+            return option.data.country === filter;
+        }
+
+        cityExpanded.addMatcher('country', matchCountry);
+        cityCollapsed.addMatcher('country', matchCountry);
+
+        country.element.on('change', function (e) {
+            if (country.value === null) {
+                cityExpanded.reset();
+                cityCollapsed.reset();
+            } else {
+                cityExpanded.filter(country.value, 'country');
+                cityCollapsed.filter(country.value, 'country');
+            }
+        });
+    </script>
+</body>
+</html>
