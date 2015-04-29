@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <form>
+        <div id="my-collection"
+            data-collection="__name__"
+            data-prototype='<div id="my-collection-__name__-group"><input type="text" id="my-collection-__name__" name="my_collection[__name__]"/><button type="button" data-collection-delete="my-collection-__name__-group" class="my-collection-delete">X</button></div>'
+            data-collection-add="my-collection-add"
+            data-collection-delete="my-collection-delete"
+            data-collection-max="3"
+            data-collection-min="1"
+        >
+        </div>
+        <button id="my-collection-add" type="button">Add</button>
+    </form>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="dist/form.js"></script>
+    <script>
+        var collection = $('#my-collection').collection().data('collection');
+    </script>
+</body>
+</html>

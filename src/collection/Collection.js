@@ -91,17 +91,19 @@ Collection.prototype.canRemove = function(item)
 
 /**
  * Add a new item
+ *
+ * @param {CollectionItem|null} item
  */
-Collection.prototype.add = function()
+Collection.prototype.add = function(item)
 {
-    var item = this.getPrototype();
+    if (typeof(item) !== 'object' && item.constructor.name !== 'CollectionItem') {
+        item = this.getPrototype();
+    }
 
     if (this.canAdd(item)) {
-
         this.items.push(item);
         this.element.append(item.element);
         this.currentKey++;
-
         this.element.trigger('collection:added', [item]);
     }
 };
@@ -145,7 +147,7 @@ Collection.prototype.parseAdd = function()
     if (addButtonId) {
         this.allowAdd  = true;
         this.addButton = $('#' + addButtonId);
-        this.addButton.on('click', this.add.bind(this));
+        this.addButton.on('click', this.onAddClick.bind(this));
 
         if (this.clearData) {
             this.element.removeAttr('data-collection-add');
@@ -224,4 +226,14 @@ Collection.prototype.parseItems = function()
 
         this.updateLimit();
     }
+};
+
+/**
+ * On add button clicked
+ *
+ * @param {Event} event
+ */
+Collection.prototype.onAddClick = function(event)
+{
+    this.add();
 };

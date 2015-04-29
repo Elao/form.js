@@ -30,7 +30,7 @@ The easiest way to specify these options is to set the correct `data-` attribute
     <div
         id="my-collection"
         data-collection="__name__"
-        data-collection-prototype="..."
+        data-prototype="..."
         data-collection-add="my-collection-add"
         data-collection-delete="my-collection-delete"
         data-collection-max="3"
@@ -45,7 +45,7 @@ The easiest way to specify these options is to set the correct `data-` attribute
 <!-- The prototype that should be in the "data-prototype" attribute. -->
 <div id="my-collection-__name__-group">
     <input type="text" id="my-collection-__name__" name="my_collection[__name__]"/>
-    <button type="button" data-delete="my-collection-__name__-group" class="my-collection-delete">X</button>
+    <button type="button" data-collection-delete="my-collection-__name__-group" class="my-collection-delete">X</button>
 </div>
 ```
 
