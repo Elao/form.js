@@ -465,6 +465,7 @@
         this.expanded = this.element.prop('tagName').toLowerCase() != 'select';
         this.multiple = (this.expanded ? $('input[type="checkbox"]', this.element).length : this.element.prop('multiple') ) ? true : false;
         this.choices  = [];
+        this.groups   = [];
         this.value    = null;
 
         this.addOptions(this.element, typeof options.data != 'undefined' ? options.data : null);
@@ -472,6 +473,13 @@
         this.element.on('change', this.updateValue.bind(this));
         this.updateValue();
     }
+
+    /**
+     * Filter groups
+     *
+     * @type {Boolean}
+     */
+    Choice.prototype.filterGroups = false;
 
     /**
      * Available matchers
@@ -504,16 +512,15 @@
      */
     Choice.prototype.addOption = function(element, data)
     {
-        var option;
-
         if (element.tagName.toLowerCase() === 'optgroup') {
-            option = new OptionGroup(element, this, data);
+            this.groups.push(new OptionGroup(element, this, data));
+            this.addOptions(element, data);
         } else {
-            option = new Option(element, this, data);
-        }
+            var option = new Option(element, this, data);
 
-        if (option.isValid()) {
-            this.choices.push(option);
+            if (option.isValid()) {
+                this.choices.push(option);
+            }
         }
     };
 
@@ -609,12 +616,17 @@
      */
     Choice.prototype.filter = function(filter, matcher)
     {
-        var length = this.choices.length;
+        var choices = this.choices.length,
+            groups = this.groups.length;
 
         matcher = this.parseMatcher(matcher);
 
-        for (var i = 0; i < length; i++) {
+        for (var i = 0; i < choices; i++) {
             this.choices[i].filter(filter, matcher);
+        }
+
+        for (var g = 0; g < groups; g++) {
+            this.groups[g].filter(null, this.matchers.validMatcher);
         }
 
         return this;
@@ -625,9 +637,14 @@
      */
     Choice.prototype.reset = function()
     {
-        var length = this.choices.length;
+        var choices = this.choices.length,
+            groups = this.groups.length;
 
-        for (var i = 0; i < length; i++) {
+        for (var g = 0; g < groups; g++) {
+            this.groups[g].attach();
+        }
+
+        for (var i = 0; i < choices; i++) {
             this.choices[i].attach();
         }
 
@@ -661,6 +678,19 @@
     };
 
     /**
+     * Test if the option is valid
+     *
+     * @param {Option} option
+     * @param {Array} filter
+     *
+     * @return {Boolean}
+     */
+    Choice.prototype.matchers.validMatcher = function(filter, option)
+    {
+        return option.isValid();
+    };
+
+    /**
      * Choose a matcher according to the given options
      *
      * @param {mixed} matcher
@@ -686,14 +716,15 @@
      * Option
      *
      * @param {Element} element
-     * @param {Choice} parent
+     * @param {Choice} choice
      * @param {Function} data
      */
-    function Option(element, parent, data)
+    function Option(element, choice, data)
     {
         this.element      = $(element);
-        this.parent       = parent;
-        this.valueElement = this.parent.expanded ? this.element.find('input[type="' + (this.parent.multiple ? 'checkbox' : 'radio') + '"]:first') : this.element;
+        this.parent       = this.element.parent();
+        this.choice       = choice;
+        this.valueElement = this.choice.expanded ? this.element.find('input[type="' + (this.choice.multiple ? 'checkbox' : 'radio') + '"]:first') : this.element;
         this.value        = smartParse(this.valueElement.val());
         this.data         = typeof(data) == 'function' ? data.call(this) : this.element.data();
     }
@@ -744,7 +775,7 @@
      */
     Option.prototype.getSelectionProperty = function()
     {
-        return this.parent.expanded ? 'checked' : 'selected';
+        return this.choice.expanded ? 'checked' : 'selected';
     };
 
     /**
@@ -752,7 +783,7 @@
      */
     Option.prototype.triggerChange = function()
     {
-        (this.parent.expanded ? this.valueElement : this.parent.element).trigger('change');
+        (this.choice.expanded ? this.valueElement : this.choice.element).trigger('change');
     };
 
     /**
@@ -773,7 +804,7 @@
     Option.prototype.attach = function()
     {
         if (!this.isAttached()) {
-            this.parent.element.append(this.element);
+            this.parent.append(this.element);
         }
     };
 

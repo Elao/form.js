@@ -185,7 +185,7 @@ __Example:__ Filter by `data-*` attribute
 </select>
 
 <select id="city">
-    <option value="1" data-country="uk">Lodon</option>
+    <option value="1" data-country="uk">London</option>
     <option value="2" data-country="uk">Manchester</option>
     <option value="3" data-country="de">Berlin</option>
     <option value="4" data-country="fr">Paris</option>
