@@ -1,6 +1,6 @@
 {
   "name": "elao-form.js",
-  "version": "0.1.3",
+  "version": "0.1.5",
   "main": "dist/form.js",
   "license": "MIT",
   "dependencies": {

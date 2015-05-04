@@ -1,5 +1,5 @@
 /*!
- * elao-form.js 0.1.3
+ * elao-form.js 0.1.5
  * http://github.com/Elao/form.js
  * Copyright 2014 Elao and other contributors; Licensed MIT
  */
@@ -252,17 +252,19 @@
 
     /**
      * Add a new item
+     *
+     * @param {CollectionItem|null} item
      */
-    Collection.prototype.add = function()
+    Collection.prototype.add = function(item)
     {
-        var item = this.getPrototype();
+        if (typeof(item) !== 'object' && item.constructor.name !== 'CollectionItem') {
+            item = this.getPrototype();
+        }
 
         if (this.canAdd(item)) {
-
             this.items.push(item);
             this.element.append(item.element);
             this.currentKey++;
-
             this.element.trigger('collection:added', [item]);
         }
     };
@@ -306,7 +308,7 @@
         if (addButtonId) {
             this.allowAdd  = true;
             this.addButton = $('#' + addButtonId);
-            this.addButton.on('click', this.add.bind(this));
+            this.addButton.on('click', this.onAddClick.bind(this));
 
             if (this.clearData) {
                 this.element.removeAttr('data-collection-add');
@@ -385,6 +387,16 @@
 
             this.updateLimit();
         }
+    };
+
+    /**
+     * On add button clicked
+     *
+     * @param {Event} event
+     */
+    Collection.prototype.onAddClick = function(event)
+    {
+        this.add();
     };
 
     /**
