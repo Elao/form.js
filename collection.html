@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
+    <title>Form.js - Collection</title>
 </head>
 <body>
     <form>
         <div id="my-collection"
             data-collection="__name__"
-            data-prototype='<div id="my-collection-__name__-group"><input type="text" id="my-collection-__name__" name="my_collection[__name__]"/><button type="button" data-collection-delete="my-collection-__name__-group" class="my-collection-delete">X</button></div>'
+            data-prototype='<div id="my-collection-__name__-group"><input type="text" id="my-collection-__name__" name="my_collection[__name__]"/> <button type="button" data-collection-delete="my-collection-__name__-group" class="my-collection-delete">X</button></div>'
             data-collection-add="my-collection-add"
             data-collection-delete="my-collection-delete"
             data-collection-max="3"
             data-collection-min="1"
         >
+            <div id="my-collection-0-group">
+                <input type="text" id="my-collection-0" name="my_collection[0]"/>
+                <button type="button" data-collection-delete="my-collection-0-group" class="my-collection-delete">X</button>
+            </div>
         </div>
         <button id="my-collection-add" type="button">Add</button>
     </form>

@@ -257,7 +257,7 @@
      */
     Collection.prototype.add = function(item)
     {
-        if (typeof(item) !== 'object' && item.constructor.name !== 'CollectionItem') {
+        if (typeof(item) === 'undefined') {
             item = this.getPrototype();
         }
 
