@@ -22,11 +22,18 @@ function Collection(element, options)
     this.onAdd         = typeof options.onAdd == 'function' ? options.onAdd : false;
     this.onRemove      = typeof options.onRemove == 'function' ? options.onRemove : false;
 
+    this.updateLimit = this.updateLimit.bind(this);
+
     this.parseAdd(options);
     this.parseDelete(options);
     this.parseMin(options);
     this.parseMax(options);
     this.parseItems(options);
+
+    if (this.min || this.max) {
+        this.element.on('collection:added', this.updateLimit);
+        this.element.on('collection:deleted', this.updateLimit);
+    }
 
     if (this.clearData) {
         this.element.removeAttr('data-collection');
@@ -178,7 +185,6 @@ Collection.prototype.parseMin = function()
 
     if (min) {
         this.min = min;
-        this.element.on('collection:deleted', this.updateLimit.bind(this));
 
         if (this.clearData) {
             this.element.removeAttr('data-collection-min');
@@ -197,7 +203,6 @@ Collection.prototype.parseMax = function()
 
     if (max) {
         this.max = max;
-        this.element.on('collection:added', this.updateLimit.bind(this));
 
         if (this.clearData) {
             this.element.removeAttr('data-collection-max');

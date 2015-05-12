@@ -42,6 +42,7 @@ CollectionItem.prototype.parseDelete = function()
         if (this.collection.allowDelete && deleteButton) {
             this.deleteButton = deleteButton;
             this.deleteButton.on('click', this.remove.bind(this));
+            this.deleteButton.removeAttr('data-collection-delete');
         }
     }
 };

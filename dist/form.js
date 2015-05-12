@@ -1,5 +1,5 @@
 /*!
- * elao-form.js 0.1.5
+ * elao-form.js 0.1.6
  * http://github.com/Elao/form.js
  * Copyright 2014 Elao and other contributors; Licensed MIT
  */
@@ -183,11 +183,18 @@
         this.onAdd         = typeof options.onAdd == 'function' ? options.onAdd : false;
         this.onRemove      = typeof options.onRemove == 'function' ? options.onRemove : false;
 
+        this.updateLimit = this.updateLimit.bind(this);
+
         this.parseAdd(options);
         this.parseDelete(options);
         this.parseMin(options);
         this.parseMax(options);
         this.parseItems(options);
+
+        if (this.min || this.max) {
+            this.element.on('collection:added', this.updateLimit);
+            this.element.on('collection:deleted', this.updateLimit);
+        }
 
         if (this.clearData) {
             this.element.removeAttr('data-collection');
@@ -339,7 +346,6 @@
 
         if (min) {
             this.min = min;
-            this.element.on('collection:deleted', this.updateLimit.bind(this));
 
             if (this.clearData) {
                 this.element.removeAttr('data-collection-min');
@@ -358,7 +364,6 @@
 
         if (max) {
             this.max = max;
-            this.element.on('collection:added', this.updateLimit.bind(this));
 
             if (this.clearData) {
                 this.element.removeAttr('data-collection-max');
@@ -443,6 +448,7 @@
             if (this.collection.allowDelete && deleteButton) {
                 this.deleteButton = deleteButton;
                 this.deleteButton.on('click', this.remove.bind(this));
+                this.deleteButton.removeAttr('data-collection-delete');
             }
         }
     };
