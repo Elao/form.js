@@ -1,5 +1,5 @@
 /*!
- * elao-form.js 0.1.6
+ * elao-form.js 0.1.7
  * http://github.com/Elao/form.js
  * Copyright 2014 Elao and other contributors; Licensed MIT
  */
