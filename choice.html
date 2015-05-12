@@ -25,7 +25,7 @@
 
         .column {
             float: left;
-            width: 50%;
+            width: 33%;
         }
     </style>
 </head>
@@ -59,14 +59,29 @@
             <fieldset>
                 <label for="country">City: <small>(select)</small></label>
                 <select id="city-collapsed">
-                    <optgroup label="West">
+                    <option value="1" data-country="uk">United Kingdom > London</option>
+                    <option value="2" data-country="uk">United Kingdom > Manchester</option>
+                    <option value="4" data-country="fr">France > Paris</option>
+                    <option value="6" data-country="fr">France > Montpellier</option>
+                    <option value="5" data-country="fr">France > Lyon</option>
+                    <option value="3" data-country="de">Germany > Berlin</option>
+                </select>
+            </fieldset>
+        </div>
+        <div class="column">
+            <fieldset>
+                <label for="country">City: <small>(select with groups)</small></label>
+                <select id="city-collapsed-group">
+                    <optgroup label="United Kingdom">
                         <option value="1" data-country="uk">London</option>
                         <option value="2" data-country="uk">Manchester</option>
+                    </optgroup>
+                    <optgroup label="France">
                         <option value="4" data-country="fr">Paris</option>
                         <option value="6" data-country="fr">Montpellier</option>
-                    </optgroup>
-                    <optgroup label="East">
                         <option value="5" data-country="fr">Lyon</option>
+                    </optgroup>
+                    <optgroup label="Germany">
                         <option value="3" data-country="de">Berlin</option>
                     </optgroup>
                 </select>
@@ -80,6 +95,7 @@
         var country = $('#country').choice().data('choice'),
             cityExpanded = $('#city-expanded').choice().data('choice');
             cityCollapsed = $('#city-collapsed').choice().data('choice');
+            cityCollapsedGroup = $('#city-collapsed-group').choice().data('choice');
 
         function matchCountry (filter, option) {
             return option.data.country === filter;
@@ -87,14 +103,17 @@
 
         cityExpanded.addMatcher('country', matchCountry);
         cityCollapsed.addMatcher('country', matchCountry);
+        cityCollapsedGroup.addMatcher('country', matchCountry);
 
         country.element.on('change', function (e) {
             if (country.value === null) {
                 cityExpanded.reset();
                 cityCollapsed.reset();
+                cityCollapsedGroup.reset();
             } else {
                 cityExpanded.filter(country.value, 'country');
                 cityCollapsed.filter(country.value, 'country');
+                cityCollapsedGroup.filter(country.value, 'country');
             }
         });
     </script>
