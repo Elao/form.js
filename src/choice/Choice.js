@@ -10,6 +10,7 @@ function Choice(element, options)
     this.expanded = this.element.prop('tagName').toLowerCase() != 'select';
     this.multiple = (this.expanded ? $('input[type="checkbox"]', this.element).length : this.element.prop('multiple') ) ? true : false;
     this.choices  = [];
+    this.groups   = [];
     this.value    = null;
 
     this.addOptions(this.element, typeof options.data != 'undefined' ? options.data : null);
@@ -17,6 +18,13 @@ function Choice(element, options)
     this.element.on('change', this.updateValue.bind(this));
     this.updateValue();
 }
+
+/**
+ * Filter groups
+ *
+ * @type {Boolean}
+ */
+Choice.prototype.filterGroups = false;
 
 /**
  * Available matchers
@@ -49,16 +57,15 @@ Choice.prototype.addOptions = function(element, data)
  */
 Choice.prototype.addOption = function(element, data)
 {
-    var option;
-
     if (element.tagName.toLowerCase() === 'optgroup') {
-        option = new OptionGroup(element, this, data);
+        this.groups.push(new OptionGroup(element, this, data));
+        this.addOptions(element, data);
     } else {
-        option = new Option(element, this, data);
-    }
+        var option = new Option(element, this, data);
 
-    if (option.isValid()) {
-        this.choices.push(option);
+        if (option.isValid()) {
+            this.choices.push(option);
+        }
     }
 };
 
@@ -154,12 +161,17 @@ Choice.prototype.getSelection = function()
  */
 Choice.prototype.filter = function(filter, matcher)
 {
-    var length = this.choices.length;
+    var choices = this.choices.length,
+        groups = this.groups.length;
 
     matcher = this.parseMatcher(matcher);
 
-    for (var i = 0; i < length; i++) {
+    for (var i = 0; i < choices; i++) {
         this.choices[i].filter(filter, matcher);
+    }
+
+    for (var g = 0; g < groups; g++) {
+        this.groups[g].filter(null, this.matchers.validMatcher);
     }
 
     return this;
@@ -170,9 +182,14 @@ Choice.prototype.filter = function(filter, matcher)
  */
 Choice.prototype.reset = function()
 {
-    var length = this.choices.length;
+    var choices = this.choices.length,
+        groups = this.groups.length;
 
-    for (var i = 0; i < length; i++) {
+    for (var g = 0; g < groups; g++) {
+        this.groups[g].attach();
+    }
+
+    for (var i = 0; i < choices; i++) {
         this.choices[i].attach();
     }
 
@@ -203,6 +220,19 @@ Choice.prototype.addMatcher = function(name, callback)
 Choice.prototype.matchers.valueOptionMatcher = function(filter, option)
 {
     return $.isArray(filter) ? filter.indexOf(option.value) >= 0 : filter === option.value;
+};
+
+/**
+ * Test if the option is valid
+ *
+ * @param {Option} option
+ * @param {Array} filter
+ *
+ * @return {Boolean}
+ */
+Choice.prototype.matchers.validMatcher = function(filter, option)
+{
+    return option.isValid();
 };
 
 /**

@@ -2,14 +2,15 @@
  * Option
  *
  * @param {Element} element
- * @param {Choice} parent
+ * @param {Choice} choice
  * @param {Function} data
  */
-function Option(element, parent, data)
+function Option(element, choice, data)
 {
     this.element      = $(element);
-    this.parent       = parent;
-    this.valueElement = this.parent.expanded ? this.element.find('input[type="' + (this.parent.multiple ? 'checkbox' : 'radio') + '"]:first') : this.element;
+    this.parent       = this.element.parent();
+    this.choice       = choice;
+    this.valueElement = this.choice.expanded ? this.element.find('input[type="' + (this.choice.multiple ? 'checkbox' : 'radio') + '"]:first') : this.element;
     this.value        = smartParse(this.valueElement.val());
     this.data         = typeof(data) == 'function' ? data.call(this) : this.element.data();
 }
@@ -60,7 +61,7 @@ Option.prototype.isSelected = function()
  */
 Option.prototype.getSelectionProperty = function()
 {
-    return this.parent.expanded ? 'checked' : 'selected';
+    return this.choice.expanded ? 'checked' : 'selected';
 };
 
 /**
@@ -68,7 +69,7 @@ Option.prototype.getSelectionProperty = function()
  */
 Option.prototype.triggerChange = function()
 {
-    (this.parent.expanded ? this.valueElement : this.parent.element).trigger('change');
+    (this.choice.expanded ? this.valueElement : this.choice.element).trigger('change');
 };
 
 /**
@@ -89,7 +90,7 @@ Option.prototype.match = function(filter, matcher)
 Option.prototype.attach = function()
 {
     if (!this.isAttached()) {
-        this.parent.element.append(this.element);
+        this.parent.append(this.element);
     }
 };
 
