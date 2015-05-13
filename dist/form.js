@@ -879,11 +879,14 @@
             this.message = options.message;
         }
 
-        this.onLeave  = this.onLeave.bind(this);
-        this.onChange = this.onChange.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
+        this.onLeave           = this.onLeave.bind(this);
+        this.onChange          = this.onChange.bind(this);
+        this.onReset           = this.onReset.bind(this);
+        this.onSubmit          = this.onSubmit.bind(this);
+        this.checkAllForChange = this.checkAllForChange.bind(this);
 
         this.element.on('submit', this.onSubmit);
+        this.element.on('reset', this.onReset);
         this.element.on('change', this.onChange);
 
         $(window).on('beforeunload', this.onLeave);
@@ -924,24 +927,60 @@
      */
     ChangeConfirmation.prototype.onChange = function(e)
     {
-        var changed = e.target.defaultValue !== e.target.value;
+        this.checkForChange(e.target);
+    };
 
-        this.getLabels(e.target).toggleClass('changed', changed);
-        this.toggleChanged(changed, e.target.id);
+    /**
+     * On form reset
+     *
+     * @param {Event} e
+     */
+    ChangeConfirmation.prototype.onReset = function(e)
+    {
+        // Needs to be asynchronous
+        setTimeout(this.checkAllForChange, 0);
+    };
+
+    /**
+     * Check all elements for change
+     */
+    ChangeConfirmation.prototype.checkAllForChange = function()
+    {
+        var elements = this.element[0].elements;
+
+        for (var element, i = elements.length - 1; i >= 0; i--) {
+            this.checkForChange(elements[i]);
+        }
+    };
+
+    /**
+     * Check for change
+     *
+     * @param {Element} element
+     */
+    ChangeConfirmation.prototype.checkForChange = function(element)
+    {
+        this.toggleChanged(element, element.defaultValue !== element.value);
     };
 
     /**
      * Add changed field
+     *
+     * @param {Element} element
+     * @param {Boolean} toggle
      */
-    ChangeConfirmation.prototype.toggleChanged = function(toggle, id)
+    ChangeConfirmation.prototype.toggleChanged = function(element, toggle)
     {
-        var index = this.changed.indexOf(id),
-            exists = index !== -1;
+        var index  = this.changed.indexOf(element),
+            exists = index !== -1,
+            labels = this.getLabels(element);
 
         if (toggle && !exists) {
-            this.changed.push(id);
+            this.changed.push(element);
+            labels.addClass('changed');
         } else if (!toggle && exists) {
             this.changed.splice(index, 1);
+            labels.removeClass('changed');
         }
     };
 
@@ -973,7 +1012,7 @@
     ChangeConfirmation.prototype.getLabels = function(element)
     {
         if (typeof(element.labels) === 'undefined') {
-            element.labels = element.labels = $('label[for="' + element.id + '"]');
+            element.labels = $('label[for="' + element.id + '"]');
         }
 
         return $(element.labels);

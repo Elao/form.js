@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form.js - Change confirmation</title>
+</head>
+    <style type="text/css">
+        input, textarea {
+            display: block;
+            margin: 10px;
+            padding: 10px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        .changed {
+            color: red;
+        }
+    </style>
+<body>
+    <a href="index.html">Back</a>
+    <h1>Change confirmation:</h1>
+
+    <form method="POST" action="" data-confirmation-message="You have unsaved changes. Are you sur you want to quit?">
+        <label for="title">Title:</label>
+        <input type="text" name="title" id="title" value="My title">
+
+        <label for="content">Content:</label>
+        <textarea name="content" id="content">My content</textarea>
+
+        <input type="submit">
+        <input type="reset">
+    </form>
+
+    <p>Try <a href="">reload the page</a> after you edited at least one field.</p>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="dist/form.js"></script>
+    <script>
+        $('[data-confirmation-message]').changeConfirmation();
+    </script>
+</body>
+</html>

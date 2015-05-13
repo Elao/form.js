@@ -5,14 +5,14 @@ The Change Confirmation watches for changes on the given form and display a conf
 ## Initialize the change confirmation on a form:
 
 ```javascript
-$("form").changeConfirmation();
+$('form').changeConfirmation();
 ```
 ## Options:
 
 You can specify the message displayed to user user, in the Javascript call:
 
 ```javascript
-$("form").changeConfirmation({ message: 'You have unsaved changes. Are you sur you want to quit?' });
+$('form').changeConfirmation({ message: 'You have unsaved changes. Are you sur you want to quit?' });
 ```
 
 Ot with the `data-confirmation-message` HTML attribute:
