@@ -10,13 +10,19 @@ $.fn.choice = function(options) {
     });
 };
 
-$.fn.changeConfirmation = function(options) {
-    return this.each(function() {
-        var options = typeof options == 'object' ? options : {},
-            element = $(this);
+$.fn.changeConfirmation = function(parameters, options) {
+    if (typeof(parameters) === 'undefined') {
+        parameters = {};
+    }
 
-        if (typeof(options.message) === 'undefined') {
-            options.message = element.data('confirmation-message');
+    return this.each(function() {
+        var element = $(this),
+            options = {
+                message: typeof(parameters.message) !== 'undefined' ? parameters.message : element.data('confirmation-message')
+            };
+
+        if (typeof(parameters.tolerance) !== 'undefined') {
+            options.tolerance = parameters.tolerance;
         }
 
         element.data('change-confirmation', new ChangeConfirmation(element, options));

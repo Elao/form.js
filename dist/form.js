@@ -1,5 +1,5 @@
 /*!
- * elao-form.js 0.1.8
+ * elao-form.js 0.1.9
  * http://github.com/Elao/form.js
  * Copyright 2014 Elao and other contributors; Licensed MIT
  */
@@ -871,11 +871,11 @@
         this.submitted = null;
         this.changed   = [];
 
-        if (typeof(options.tolerance) !== 'undefined') {
+        if (typeof(options.tolerance) === 'number') {
             this.tolerance = options.tolerance;
         }
 
-        if (typeof(options.message) !== 'undefined') {
+        if (typeof(options.message) === 'string') {
             this.message = options.message;
         }
 
@@ -1040,13 +1040,19 @@
         });
     };
 
-    $.fn.changeConfirmation = function(options) {
-        return this.each(function() {
-            var options = typeof options == 'object' ? options : {},
-                element = $(this);
+    $.fn.changeConfirmation = function(parameters, options) {
+        if (typeof(parameters) === 'undefined') {
+            parameters = {};
+        }
 
-            if (typeof(options.message) === 'undefined') {
-                options.message = element.data('confirmation-message');
+        return this.each(function() {
+            var element = $(this),
+                options = {
+                    message: typeof(parameters.message) !== 'undefined' ? parameters.message : element.data('confirmation-message')
+                };
+
+            if (typeof(parameters.tolerance) !== 'undefined') {
+                options.tolerance = parameters.tolerance;
             }
 
             element.data('change-confirmation', new ChangeConfirmation(element, options));

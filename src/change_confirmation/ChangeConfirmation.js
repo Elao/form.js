@@ -10,11 +10,11 @@ function ChangeConfirmation(element, options)
     this.submitted = null;
     this.changed   = [];
 
-    if (typeof(options.tolerance) !== 'undefined') {
+    if (typeof(options.tolerance) === 'number') {
         this.tolerance = options.tolerance;
     }
 
-    if (typeof(options.message) !== 'undefined') {
+    if (typeof(options.message) === 'string') {
         this.message = options.message;
     }
 
