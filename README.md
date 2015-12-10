@@ -1,7 +1,7 @@
 form.js
 =======
 
-[![Build Status](http://api.travis-ci.org/Elao/form.js.png)](http://travis-ci.org/Elao/form.js)
+__Working with Symfony? Check out [Elao/ElaoFormBundle](https://github.com/Elao/ElaoFormBundle)!__
 
 Form JS utilities.
 
